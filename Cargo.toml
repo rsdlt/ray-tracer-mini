@@ -10,3 +10,4 @@ name = "raytracer"
 path = "src/lib/mod.rs"
 
 [dependencies]
+derive_more = "0.99.17"
