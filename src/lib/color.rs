@@ -4,12 +4,24 @@ use std::ops::{Div, Mul};
 
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
 pub struct Color {
-    r: f64,
-    g: f64,
-    b: f64,
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
 }
 
-impl Color {}
+impl Color {
+    pub fn write_color(line: &mut String, color: &Color) {
+        line.push_str(
+            format!(
+                "{} {} {}\n",
+                (color.r * 255.999) as usize,
+                (color.g * 255.999) as usize,
+                (color.b * 255.999) as usize,
+            )
+            .as_str(),
+        );
+    }
+}
 
 impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
