@@ -42,4 +42,30 @@ mod tests {
 
         assert_eq!( v1 - v2, Vec3 { x: 0.0, y: 0.0, z: 0.0 } )
     }
+
+    #[test]
+    #[rustfmt::skip]
+    fn derive_mul() {
+        let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
+        let val = 2.0;
+
+        assert_eq!( v1 * val, Vec3 { x: 2.0, y: 4.0, z: 6.0 } )
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn derive_div() {
+        let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
+        let val = 2.0;
+
+        assert_eq!( v1 / val, Vec3 { x: 1.0, y: 2.0, z: 3.0 } )
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn derive_neg() {
+        let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
+
+        assert_eq!( -v1, Vec3 { x: -2.0, y: -4.0, z: -6.0 } )
+    }
 }
