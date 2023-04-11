@@ -3,7 +3,7 @@ const EPSILON: f64 = 0.001;
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
 
-#[derive(Debug, Add, Sub, Neg)]
+#[derive(Debug, Copy, Clone, Add, Sub, Neg)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -28,6 +28,10 @@ impl Vec3 {
             y: lhs.z * rhs.x - lhs.x * rhs.z,
             z: lhs.x * rhs.y - lhs.y * rhs.x,
         }
+    }
+
+    pub fn unit(&self) -> Self {
+        *self / self.length()
     }
 }
 
@@ -193,5 +197,13 @@ mod tests {
         let v2 = Vec3 { x: 4.0, y: 9.0, z: 2.0, };
 
         assert_eq!( Vec3::cross(v1, v2), Vec3 { x: -15.0, y: -2.0, z: 39.0 } )
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn unit() {
+        let v1 = Vec3 { x: -2.0, y: 4.0, z: -4.0, };
+
+        assert_eq!( v1.unit(), Vec3 { x: -1.0 / 3.0, y: 2.0 / 3.0, z: -2.0 / 3.0 } )
     }
 }
