@@ -14,7 +14,7 @@ pub fn render() -> Result<File, std::io::Error> {
 
     let mut line = format!("P3\n{} {} \n255\n", IMG_WIDTH, IMG_HEIGHT);
 
-    for j in 0..IMG_HEIGHT {
+    for j in (0..IMG_HEIGHT).rev() {
         for i in 0..IMG_WIDTH {
             let color = Color {
                 r: (i as f64) / (IMG_WIDTH - 1) as f64,
