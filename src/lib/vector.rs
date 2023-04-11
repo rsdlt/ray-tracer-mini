@@ -1,4 +1,4 @@
-const EPSILON: f64 = 0.001;
+use super::EPSILON;
 
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
@@ -9,6 +9,8 @@ pub struct Vec3 {
     y: f64,
     z: f64,
 }
+
+pub type Point3 = Vec3;
 
 impl Vec3 {
     pub fn length_squared(&self) -> f64 {
@@ -121,7 +123,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_add() {
+    fn vec_derive_add() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let v2 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         
@@ -130,7 +132,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_sub() {
+    fn  vec_derive_sub() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let v2 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
 
@@ -139,7 +141,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn mul() {
+    fn  vec_mul() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let v2 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
 
@@ -148,7 +150,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn mul_const() {
+    fn  vec_mul_const() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let val = 2.0;
 
@@ -157,7 +159,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn div() {
+    fn  vec_div() {
         let v1 = Vec3 { x: 4.0, y: 6.0, z: 9.0, };
         let v2 = Vec3 { x: 1.0, y: 3.0, z: 3.0, };
 
@@ -166,7 +168,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn div_const() {
+    fn  vec_div_const() {
         let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
         let val = 2.0;
 
@@ -175,7 +177,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_neg() {
+    fn  vec_derive_neg() {
         let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
 
         assert_eq!( -v1, Vec3 { x: -2.0, y: -4.0, z: -6.0 } )
@@ -183,7 +185,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn dot() {
+    fn  vec_dot() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let v2 = Vec3 { x: 4.0, y: -5.0, z: 6.0, };
 
@@ -192,7 +194,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn cross() {
+    fn  vec_cross() {
         let v1 = Vec3 { x: 3.0, y: -3.0, z: 1.0, };
         let v2 = Vec3 { x: 4.0, y: 9.0, z: 2.0, };
 
@@ -201,7 +203,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn unit() {
+    fn  vec_unit() {
         let v1 = Vec3 { x: -2.0, y: 4.0, z: -4.0, };
 
         assert_eq!( v1.unit(), Vec3 { x: -1.0 / 3.0, y: 2.0 / 3.0, z: -2.0 / 3.0 } )
