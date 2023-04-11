@@ -9,12 +9,18 @@ fn render() -> Result<File, std::io::Error> {
     let path = Path::new("image.ppm");
     let mut img_file = File::create(path)?;
 
-    let line = format!("P3\n {} {} \n255\n", IMG_WIDTH, IMG_HEIGHT);
+    let line = format!("P3\n{} {} \n255\n", IMG_WIDTH, IMG_HEIGHT);
     write!(img_file, "{}", line)?;
 
     Ok(img_file)
 }
 
 fn main() {
-    render();
+    match render() {
+        Ok(img_file) => println!(
+            "image created {:?}",
+            img_file.metadata().expect("metadata error")
+        ),
+        Err(err) => println!("error: {:?}", err),
+    }
 }
