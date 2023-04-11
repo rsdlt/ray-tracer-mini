@@ -17,6 +17,18 @@ impl Vec3 {
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
+
+    pub fn dot(lhs: Self, rhs: Self) -> f64 {
+        lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z
+    }
+
+    pub fn cross(lhs: Self, rhs: Self) -> Self {
+        Self {
+            x: lhs.y * rhs.z - lhs.z * rhs.y,
+            y: lhs.z * rhs.x - lhs.x * rhs.z,
+            z: lhs.x * rhs.y - lhs.y * rhs.x,
+        }
+    }
 }
 
 impl PartialEq for Vec3 {
@@ -123,7 +135,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_mul() {
+    fn mul() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let v2 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
 
@@ -132,7 +144,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_mul_const() {
+    fn mul_const() {
         let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
         let val = 2.0;
 
@@ -141,7 +153,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_div() {
+    fn div() {
         let v1 = Vec3 { x: 4.0, y: 6.0, z: 9.0, };
         let v2 = Vec3 { x: 1.0, y: 3.0, z: 3.0, };
 
@@ -150,7 +162,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn derive_div_const() {
+    fn div_const() {
         let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
         let val = 2.0;
 
@@ -163,5 +175,23 @@ mod tests {
         let v1 = Vec3 { x: 2.0, y: 4.0, z: 6.0, };
 
         assert_eq!( -v1, Vec3 { x: -2.0, y: -4.0, z: -6.0 } )
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn dot() {
+        let v1 = Vec3 { x: 1.0, y: 2.0, z: 3.0, };
+        let v2 = Vec3 { x: 4.0, y: -5.0, z: 6.0, };
+
+        assert_eq!( Vec3::dot(v1, v2), 12.0 )
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn cross() {
+        let v1 = Vec3 { x: 3.0, y: -3.0, z: 1.0, };
+        let v2 = Vec3 { x: 4.0, y: 9.0, z: 2.0, };
+
+        assert_eq!( Vec3::cross(v1, v2), Vec3 { x: -15.0, y: -2.0, z: 39.0 } )
     }
 }
