@@ -12,13 +12,19 @@ pub struct Color {
 
 impl Color {
     pub fn write_color(line: &mut String, color: &Color, samples_per_pixel: usize) {
+        // Divide color by # of samples and gamma-correct for gamma 2.0
         let scale = 1.0 / (samples_per_pixel as f64);
+        let (r, g, b) = (
+            ((color.r * scale).sqrt()).clamp(0.0, 0.999),
+            ((color.g * scale).sqrt()).clamp(0.0, 0.999),
+            ((color.b * scale).sqrt()).clamp(0.0, 0.999),
+        );
         line.push_str(
             format!(
                 "{} {} {}\n",
-                (256.0 * (color.r * scale).clamp(0.0, 0.999)) as usize,
-                (256.0 * (color.g * scale).clamp(0.0, 0.999)) as usize,
-                (256.0 * (color.b * scale).clamp(0.0, 0.999)) as usize,
+                (256.0 * r) as usize,
+                (256.0 * g) as usize,
+                (256.0 * b) as usize,
             )
             .as_str(),
         );
