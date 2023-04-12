@@ -19,8 +19,9 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
     }
 
     if let Some(hit) = world.hit(&ray, 0.001, INFINITY) {
-        // let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
-        let target = hit.p + hit.normal + Point3::random_unit_vector();
+        // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
+        // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
+        let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
         return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
     }
 
@@ -42,10 +43,10 @@ pub fn render() -> Result<File, std::io::Error> {
     let max_depth = 50_usize;
 
     // World
-    let sph1 = Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
-    let sph2 = Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
-    let mut world = HittableList::new(sph1);
-    world.add(sph2);
+    let sphere_1 = Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
+    let sphere_2 = Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
+    let mut world = HittableList::new(sphere_1);
+    world.add(sphere_2);
 
     // Render
     let path = Path::new("image.ppm");
