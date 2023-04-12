@@ -15,13 +15,15 @@ fn ray_color(r: Ray) -> Color {
     let unit_direction = r.direction().to_unit();
     let t = 0.5 * (unit_direction.y + 1.0);
 
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
+    let blended_color = (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0);
+
+    blended_color
 }
 
 pub fn render() -> Result<File, std::io::Error> {
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400 as usize;
+    let image_width = 400_usize;
     let image_height = (image_width as f64 / aspect_ratio) as usize;
 
     // Camera
@@ -43,13 +45,14 @@ pub fn render() -> Result<File, std::io::Error> {
 
     for j in (0..image_height).rev() {
         for i in 0..image_width {
-            let u = i / (image_width - 1);
-            let v = j / (image_height - 1);
-
+            let u: f64 = (i as f64) / (image_width as f64 - 1.0);
+            let v: f64 = (j as f64) / (image_height as f64 - 1.0);
+            // dbg!(&v);
             let r = Ray::new(
                 origin,
-                lower_left_corner + (u as f64 * horizontal) + (v as f64 * vertical) - origin,
+                lower_left_corner + (u * horizontal) + (v * vertical) - origin,
             );
+
             let color = ray_color(r);
 
             Color::write_color(&mut line, &color);
