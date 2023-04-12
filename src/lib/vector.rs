@@ -10,6 +10,8 @@ pub struct Vec3 {
     pub z: f64,
 }
 
+pub type Point3 = Vec3;
+
 impl Vec3 {
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
@@ -32,6 +34,10 @@ impl Vec3 {
 
     pub fn unit(vec: Self) -> Self {
         vec / vec.length()
+    }
+
+    pub fn to_unit(&self) -> Self {
+        *self / self.length()
     }
 
     pub fn new(x: f64, y: f64, z: f64) -> Self {
