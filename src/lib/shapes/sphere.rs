@@ -38,7 +38,8 @@ impl Hittable for Sphere {
 
         rec.t = root;
         rec.p = ray.at(rec.t);
-        rec.normal = (rec.p - self.center) / self.radius;
+        let outward_normal = (rec.p - self.center) / self.radius;
+        rec.set_face_normal(ray, outward_normal);
 
         true
     }
