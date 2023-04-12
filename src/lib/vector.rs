@@ -1,5 +1,5 @@
-use super::EPSILON;
-
+use crate::color::Color;
+use crate::utilities::EPSILON;
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
 
@@ -57,6 +57,20 @@ impl Vec3 {
             x: 1.0,
             y: 1.0,
             z: 1.0,
+        }
+    }
+
+    pub fn default() -> Self {
+        Self::zeroes()
+    }
+}
+
+impl From<Color> for Vec3 {
+    fn from(value: Color) -> Self {
+        Self {
+            x: value.r,
+            y: value.g,
+            z: value.b,
         }
     }
 }
