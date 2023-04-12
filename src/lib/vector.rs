@@ -30,8 +30,28 @@ impl Vec3 {
         }
     }
 
-    pub fn unit(&self) -> Self {
-        *self / self.length()
+    pub fn unit(vec: Self) -> Self {
+        vec / vec.length()
+    }
+
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
+    }
+
+    pub fn zeroes() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub fn ones() -> Self {
+        Self {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+        }
     }
 }
 
@@ -204,6 +224,6 @@ mod tests {
     fn  vec_unit() {
         let v1 = Vec3 { x: -2.0, y: 4.0, z: -4.0, };
 
-        assert_eq!( v1.unit(), Vec3 { x: -1.0 / 3.0, y: 2.0 / 3.0, z: -2.0 / 3.0 } )
+        assert_eq!( Vec3::unit(v1), Vec3 { x: -1.0 / 3.0, y: 2.0 / 3.0, z: -2.0 / 3.0 } )
     }
 }

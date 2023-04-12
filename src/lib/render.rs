@@ -3,10 +3,20 @@
 const IMG_WIDTH: usize = 256;
 const IMG_HEIGHT: usize = 256;
 
-use crate::color::Color;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+
+use crate::color::Color;
+use crate::ray::Ray;
+use crate::vector::Vec3;
+
+fn ray_color(r: &Ray) -> Color {
+    let unit_direction = Vec3::unit(r.dir);
+    let t = 0.5 * (unit_direction.y + 1.0);
+
+    Color::white() * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
+}
 
 pub fn render() -> Result<File, std::io::Error> {
     let path = Path::new("image.ppm");
