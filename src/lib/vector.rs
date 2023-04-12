@@ -1,5 +1,5 @@
 use crate::color::Color;
-use crate::utilities::EPSILON;
+use crate::utilities::{random_float, random_float_range, EPSILON};
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
 
@@ -13,6 +13,33 @@ pub struct Vec3 {
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    pub fn random() -> Self {
+        Self {
+            x: random_float(),
+            y: random_float(),
+            z: random_float(),
+        }
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Self {
+        Self {
+            x: random_float_range(min, max),
+            y: random_float_range(min, max),
+            z: random_float_range(min, max),
+        }
+    }
+
+    pub fn random_int_unit_sphere() -> Self {
+        loop {
+            let p = Vec3::random_range(-1.0, 1.0);
+            if p.length_squared() >= 1.0 {
+                continue;
+            } else {
+                return p;
+            }
+        }
+    }
+
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
@@ -59,9 +86,11 @@ impl Vec3 {
             z: 1.0,
         }
     }
+}
 
-    pub fn default() -> Self {
-        Self::zeroes()
+impl Default for Vec3 {
+    fn default() -> Self {
+        Vec3::zeroes()
     }
 }
 

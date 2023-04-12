@@ -12,9 +12,17 @@ use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, INFINITY};
 use crate::vector::Point3;
 
-fn ray_color(ray: &Ray, world: &HittableList) -> Color {
+fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
+    // Recursion base case: if exceeded the ray bounce limit, no more light is gathered
+    if depth == 0 {
+        return Color::black();
+    }
+
     if let Some(hit) = world.hit(&ray, 0.0, INFINITY) {
-        return 0.5 * (Color::from(hit.normal) + Color::new(1.0, 1.0, 1.0));
+        let target = hit.p + hit.normal + Point3::random_int_unit_sphere();
+        return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
+
+        // return 0.5 * (Color::from(hit.normal) + Color::new(1.0, 1.0, 1.0));
     }
 
     let unit_direction = ray.direction().to_unit();
@@ -24,20 +32,21 @@ fn ray_color(ray: &Ray, world: &HittableList) -> Color {
 }
 
 pub fn render() -> Result<File, std::io::Error> {
+    // Camera
+    let camera = Camera::new();
+
     // Image
-    let aspect_ratio = 16.0 / 9.0;
+    let aspect_ratio = camera.aspect_ratio();
     let image_width = 400_usize;
     let image_height = (image_width as f64 / aspect_ratio) as usize;
     let samples_per_pixel = 100_usize;
+    let max_depth = 50_usize;
 
     // World
     let sph1 = Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
     let sph2 = Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
     let mut world = HittableList::new(sph1);
     world.add(sph2);
-
-    // Camera
-    let camera = Camera::new();
 
     // Render
     let path = Path::new("image.ppm");
@@ -52,20 +61,9 @@ pub fn render() -> Result<File, std::io::Error> {
                 let u = (i as f64 + random_float()) / (image_width as f64 - 1.0);
                 let v = (j as f64 + random_float()) / (image_height as f64 - 1.0);
                 let ray = camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(&ray, &world);
+                pixel_color = pixel_color + ray_color(&ray, &world, max_depth);
             }
             Color::write_color(&mut line, &pixel_color, samples_per_pixel);
-
-            // let u: f64 = (i as f64) / (image_width as f64 - 1.0);
-            // let v: f64 = (j as f64) / (image_height as f64 - 1.0);
-            // let ray = Ray::new(
-            //     origin,
-            //     lower_left_corner + (u * horizontal) + (v * vertical) - origin,
-            // );
-            //
-            // let color = ray_color(&ray, &world);
-            //
-            // Color::write_color(&mut line, &color);
         }
     }
     write!(img_file, "{}", line)?;
