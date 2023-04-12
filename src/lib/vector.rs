@@ -29,7 +29,7 @@ impl Vec3 {
         }
     }
 
-    pub fn random_int_unit_sphere() -> Self {
+    pub fn random_in_unit_sphere() -> Self {
         loop {
             let p = Vec3::random_range(-1.0, 1.0);
             if p.length_squared() >= 1.0 {
@@ -38,6 +38,10 @@ impl Vec3 {
                 return p;
             }
         }
+    }
+
+    pub fn random_unit_vector() -> Self {
+        Self::unit(Self::random_in_unit_sphere())
     }
 
     pub fn length_squared(&self) -> f64 {
