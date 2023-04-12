@@ -11,29 +11,29 @@ use crate::color::Color;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
-fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
-    let oc = r.origin() - center;
-    let a = Vec3::dot(r.direction(), r.direction());
-    let b = 2.0 * Vec3::dot(oc, r.direction());
-    let c = Vec3::dot(oc, oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
+fn hit_sphere(center: Point3, radius: f64, ray: &Ray) -> f64 {
+    let origin_center = ray.origin() - center;
+    let a = ray.direction().length_squared();
+    let half_b = Vec3::dot(origin_center, ray.direction());
+    let c = origin_center.length_squared() - radius * radius;
+    let discriminant = half_b * half_b - a * c;
 
     if discriminant < 0.0 {
         -1.0
     } else {
-        (-b - discriminant.sqrt()) / (2.0 * a)
+        (-half_b - discriminant.sqrt()) / (a)
     }
 }
 
-fn ray_color(r: Ray) -> Color {
-    let mut t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &r);
+fn ray_color(ray: Ray) -> Color {
+    let mut t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &ray);
 
     if t > 0.0 {
-        let n = Vec3::unit(r.at(t) - Vec3::new(0.0, 0.0, -1.0));
-        return 0.5 * Color::new(n.x + 1.0, n.y + 1.0, n.z + 1.0);
+        let normal = Vec3::unit(ray.at(t) - Vec3::new(0.0, 0.0, -1.0));
+        return 0.5 * Color::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
     }
 
-    let unit_direction = r.direction().to_unit();
+    let unit_direction = ray.direction().to_unit();
     t = 0.5 * (unit_direction.y + 1.0);
 
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
