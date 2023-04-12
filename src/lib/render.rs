@@ -18,7 +18,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
         return Color::black();
     }
 
-    if let Some(hit) = world.hit(&ray, 0.0, INFINITY) {
+    if let Some(hit) = world.hit(&ray, 0.001, INFINITY) {
         let target = hit.p + hit.normal + Point3::random_int_unit_sphere();
         return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
     }
