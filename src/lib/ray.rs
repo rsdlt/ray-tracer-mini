@@ -1,4 +1,4 @@
-use super::vector::{Point3, Vec3};
+use crate::vector::{Point3, Vec3};
 
 #[derive(Debug)]
 pub struct Ray {

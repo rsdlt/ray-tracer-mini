@@ -1,8 +1,5 @@
 #![allow(unused_assignments, clippy::write_with_newline)]
 
-const IMG_WIDTH: usize = 256;
-const IMG_HEIGHT: usize = 256;
-
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
