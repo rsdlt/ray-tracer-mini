@@ -10,7 +10,7 @@ pub fn degrees_to_radians(degrees: f64) -> f64 {
 
 // Return real random in [0, 1)
 pub fn random_float() -> f64 {
-    let mut rng = rand::thread_rng();
+    let mut rng = thread_rng();
     rng.gen_range(0.0..=1.0)
 }
 

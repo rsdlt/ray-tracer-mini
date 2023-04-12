@@ -11,17 +11,29 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn write_color(line: &mut String, color: &Color) {
+    pub fn write_color(line: &mut String, color: &Color, samples_per_pixel: usize) {
+        let scale = 1.0 / (samples_per_pixel as f64);
         line.push_str(
             format!(
                 "{} {} {}\n",
-                (color.r * 255.999) as usize,
-                (color.g * 255.999) as usize,
-                (color.b * 255.999) as usize,
+                (256.0 * (color.r * scale).clamp(0.0, 0.999)) as usize,
+                (256.0 * (color.g * scale).clamp(0.0, 0.999)) as usize,
+                (256.0 * (color.b * scale).clamp(0.0, 0.999)) as usize,
             )
             .as_str(),
         );
     }
+    // pub fn write_color(line: &mut String, color: &Color) {
+    //     line.push_str(
+    //         format!(
+    //             "{} {} {}\n",
+    //             (color.r * 255.999) as usize,
+    //             (color.g * 255.999) as usize,
+    //             (color.b * 255.999) as usize,
+    //         )
+    //         .as_str(),
+    //     );
+    // }
 
     pub fn new(r: f64, g: f64, b: f64) -> Self {
         Self { r, g, b }

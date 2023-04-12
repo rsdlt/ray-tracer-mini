@@ -4,12 +4,13 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::ray::Ray;
 use crate::shapes::sphere::Sphere;
-use crate::utilities::INFINITY;
-use crate::vector::{Point3, Vec3};
+use crate::utilities::{random_float, INFINITY};
+use crate::vector::Point3;
 
 fn ray_color(ray: &Ray, world: &HittableList) -> Color {
     if let Some(hit) = world.hit(&ray, 0.0, INFINITY) {
@@ -27,6 +28,7 @@ pub fn render() -> Result<File, std::io::Error> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400_usize;
     let image_height = (image_width as f64 / aspect_ratio) as usize;
+    let samples_per_pixel = 100_usize;
 
     // World
     let sph1 = Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
@@ -35,15 +37,7 @@ pub fn render() -> Result<File, std::io::Error> {
     world.add(sph2);
 
     // Camera
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3::zeroes();
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
+    let camera = Camera::new();
 
     // Render
     let path = Path::new("image.ppm");
@@ -52,16 +46,26 @@ pub fn render() -> Result<File, std::io::Error> {
 
     for j in (0..image_height).rev() {
         for i in 0..image_width {
-            let u: f64 = (i as f64) / (image_width as f64 - 1.0);
-            let v: f64 = (j as f64) / (image_height as f64 - 1.0);
-            let ray = Ray::new(
-                origin,
-                lower_left_corner + (u * horizontal) + (v * vertical) - origin,
-            );
+            let mut pixel_color = Color::black();
 
-            let color = ray_color(&ray, &world);
+            for _s in 0..samples_per_pixel {
+                let u = (i as f64 + random_float()) / (image_width as f64 - 1.0);
+                let v = (j as f64 + random_float()) / (image_height as f64 - 1.0);
+                let ray = camera.get_ray(u, v);
+                pixel_color = pixel_color + ray_color(&ray, &world);
+            }
+            Color::write_color(&mut line, &pixel_color, samples_per_pixel);
 
-            Color::write_color(&mut line, &color);
+            // let u: f64 = (i as f64) / (image_width as f64 - 1.0);
+            // let v: f64 = (j as f64) / (image_height as f64 - 1.0);
+            // let ray = Ray::new(
+            //     origin,
+            //     lower_left_corner + (u * horizontal) + (v * vertical) - origin,
+            // );
+            //
+            // let color = ray_color(&ray, &world);
+            //
+            // Color::write_color(&mut line, &color);
         }
     }
     write!(img_file, "{}", line)?;
