@@ -45,7 +45,13 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
 pub fn render() -> Result<File, std::io::Error> {
     // Camera
     let big_r = (PI / 4.0).cos();
-    let camera = Camera::new(90.0, ASPECT_RATIO);
+    let camera = Camera::new(
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        90.0,
+        ASPECT_RATIO,
+    );
 
     // Image
     let aspect_ratio = camera.aspect_ratio();
@@ -55,42 +61,42 @@ pub fn render() -> Result<File, std::io::Error> {
     let max_depth = 50_usize;
 
     // World
-    let material_left = Box::new(Lambertian::new(Color::new(0.0, 0.0, 1.0)));
-    let material_right = Box::new(Lambertian::new(Color::new(1.0, 0.0, 0.0)));
-    // let material_left = Box::new(Dielectric::new(1.5));
-    // let material_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
+    let material_ground = Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Box::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
+    let material_left = Box::new(Dielectric::new(1.5));
+    let material_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
 
     let sphere_1 = Box::new(Sphere::new(
-        Point3::new(-big_r, 0.0, -1.0),
-        big_r,
-        material_left,
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
     ));
     let sphere_2 = Box::new(Sphere::new(
-        Point3::new(big_r, 0.0, -1.0),
-        big_r,
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    ));
+    let sphere_3 = Box::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left.clone(),
+    ));
+    let sphere_4 = Box::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        -0.45,
+        material_left,
+    ));
+    let sphere_5 = Box::new(Sphere::new(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
         material_right,
     ));
-    // let sphere_3 = Box::new(Sphere::new(
-    //     Point3::new(-1.0, 0.0, -1.0),
-    //     0.5,
-    //     material_left.clone(),
-    // ));
-    // let sphere_4 = Box::new(Sphere::new(
-    //     Point3::new(-1.0, 0.0, -1.0),
-    //     -0.4,
-    //     material_left,
-    // ));
-    // let sphere_5 = Box::new(Sphere::new(
-    //     Point3::new(1.0, 0.0, -1.0),
-    //     0.5,
-    //     material_right,
-    // ));
 
     let mut world = HittableList::new(sphere_1);
     world.add(sphere_2);
-    // world.add(sphere_3);
-    // world.add(sphere_4);
-    // world.add(sphere_5);
+    world.add(sphere_3);
+    world.add(sphere_4);
+    world.add(sphere_5);
 
     // Render
     let path = Path::new("image.ppm");
