@@ -44,6 +44,21 @@ impl Vec3 {
         }
     }
 
+    pub fn random_in_unit_disk() -> Self {
+        loop {
+            let p = Vec3::new(
+                random_float_range(-1.0, 1.0),
+                random_float_range(-1.0, 1.0),
+                0.0,
+            );
+            if p.length_squared() >= 1.0 {
+                continue;
+            } else {
+                return p;
+            }
+        }
+    }
+
     pub fn random_in_unit_sphere() -> Self {
         loop {
             let p = Vec3::random_range(-1.0, 1.0);
