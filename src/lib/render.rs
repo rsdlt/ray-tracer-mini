@@ -7,10 +7,11 @@ use std::path::Path;
 use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
+use crate::materials::{lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
 use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, INFINITY};
-use crate::vector::Point3;
+use crate::vector::{Point3, Vec3};
 
 fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
     // Recursion base case: if exceeded the ray bounce limit, no more light is gathered
@@ -21,8 +22,19 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
     if let Some(hit) = world.hit(&ray, 0.001, INFINITY) {
         // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
         // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
-        let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
-        return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
+
+        // let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
+        // return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
+
+        let mut scattered = Ray::new(Point3::default(), Vec3::default());
+        let mut attenuation = Color::black();
+        if hit
+            .material
+            .scatter(&ray, &hit, &mut attenuation, &mut scattered)
+        {
+            return attenuation * ray_color(&scattered, world, depth - 1);
+        }
+        return Color::black();
     }
 
     let unit_direction = ray.direction().to_unit();
@@ -43,10 +55,35 @@ pub fn render() -> Result<File, std::io::Error> {
     let max_depth = 50_usize;
 
     // World
-    let sphere_1 = Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
-    let sphere_2 = Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
+    let material_ground = Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.8)));
+    let material_center = Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Box::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+
+    let sphere_1 = Box::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    ));
+    let sphere_2 = Box::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    ));
+    let sphere_3 = Box::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left,
+    ));
+    let sphere_4 = Box::new(Sphere::new(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    ));
     let mut world = HittableList::new(sphere_1);
     world.add(sphere_2);
+    world.add(sphere_3);
+    world.add(sphere_4);
 
     // Render
     let path = Path::new("image.ppm");

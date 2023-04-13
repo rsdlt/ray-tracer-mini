@@ -1,15 +1,22 @@
+use crate::color::Color;
+use crate::materials::lambertian::Lambertian;
+use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
-#[derive(Debug, Copy, Clone)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
+    pub material: Box<dyn Material>,
     pub t: f64,
     pub front_face: bool,
 }
 
 impl HitRecord {
+    fn get_material(&self) -> &dyn Material {
+        &*self.material
+    }
+
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3) {
         self.front_face = Vec3::dot(ray.direction(), outward_normal) < 0.0;
         self.normal = match self.front_face {
@@ -18,10 +25,17 @@ impl HitRecord {
         };
     }
 
-    pub fn new(p: Point3, normal: Vec3, t: f64, front_face: bool) -> Self {
+    pub fn new(
+        p: Point3,
+        normal: Vec3,
+        material: Box<dyn Material>,
+        t: f64,
+        front_face: bool,
+    ) -> Self {
         Self {
             p,
             normal,
+            material,
             t,
             front_face,
         }
@@ -32,6 +46,7 @@ impl Default for HitRecord {
         Self {
             p: Point3::default(),
             normal: Vec3::default(),
+            material: Box::new(Lambertian::new(Color::black())),
             t: 0.0,
             front_face: false,
         }
