@@ -1,5 +1,5 @@
 use crate::color::Color;
-use crate::utilities::{random_float, random_float_range, EPSILON};
+use crate::utilities::{random_float, random_float_range, EPSILON, NEAR_ZERO};
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
 
@@ -13,6 +13,14 @@ pub struct Vec3 {
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    pub fn reflect(v: Vec3, n: Vec3) -> Self {
+        v - 2.0 * Vec3::dot(v, n) * n
+    }
+
+    pub fn near_zero(&self) -> bool {
+        // return true if the vector is close to zero in all dimensions.
+        self.x.abs() < NEAR_ZERO && self.y.abs() < NEAR_ZERO && self.z.abs() < NEAR_ZERO
+    }
     pub fn random() -> Self {
         Self {
             x: random_float(),

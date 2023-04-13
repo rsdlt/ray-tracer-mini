@@ -5,16 +5,16 @@ use crate::ray::Ray;
 use crate::vector::Vec3;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Lambertian {
+pub struct Metal {
     pub albedo: Color,
 }
-impl Lambertian {
+impl Metal {
     pub fn new(albedo: Color) -> Self {
         Self { albedo }
     }
 }
 
-impl Material for Lambertian {
+impl Material for Metal {
     fn scatter(
         &self,
         r_in: &Ray,
@@ -22,16 +22,11 @@ impl Material for Lambertian {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
-
-        // Catch degenerate scatter direction
-        if scatter_direction.near_zero() {
-            scatter_direction = rec.normal;
-        }
-
-        *scattered = Ray::new(rec.p, scatter_direction);
+        let reflected = Vec3::reflect(Vec3::unit(r_in.direction()), rec.normal);
+        *scattered = Ray::new(rec.p, reflected);
         *attenuation = self.albedo;
-        true
+
+        Vec3::dot(scattered.direction(), rec.normal) > 0.0
     }
 
     fn clone_box(&self) -> Box<dyn Material> {
