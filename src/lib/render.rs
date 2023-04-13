@@ -7,7 +7,7 @@ use std::path::Path;
 use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::materials::{lambertian::Lambertian, metal::Metal};
+use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
 use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, INFINITY};
@@ -55,8 +55,10 @@ pub fn render() -> Result<File, std::io::Error> {
 
     // World
     let material_ground = Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.8)));
-    let material_center = Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
-    let material_left = Box::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    // let material_center = Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    // let material_left = Box::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_center = Box::new(Dielectric::new(1.5));
+    let material_left = Box::new(Dielectric::new(1.5));
     let material_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
 
     let sphere_1 = Box::new(Sphere::new(
