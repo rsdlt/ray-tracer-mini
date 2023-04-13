@@ -1,15 +1,15 @@
 use crate::ray::Ray;
+use crate::utilities::{degrees_to_radians, ASPECT_RATIO, ASPECT_RATIO_H, ASPECT_RATIO_W};
 use crate::vector::{Point3, Vec3};
 
-const ASPECT_RATIO_W: f64 = 16.0;
-const ASPECT_RATIO_H: f64 = 9.0;
-const ASPECT_RATIO: f64 = ASPECT_RATIO_W / ASPECT_RATIO_H;
 const VIEWPORT_H: f64 = 2.0;
 const VIEWPORT_W: f64 = ASPECT_RATIO * VIEWPORT_H;
 const FOCAL_LENGTH: f64 = 1.0;
 
 pub struct Camera {
-    aspect_ratio: f64,
+    pub vfov: f64, // vertical field-of-view in degrees
+    pub aspect_ratio: f64,
+
     viewport_height: f64,
     viewport_width: f64,
     focal_length: f64,
@@ -23,6 +23,7 @@ pub struct Camera {
 impl Default for Camera {
     fn default() -> Self {
         Self {
+            vfov: 0.0,
             aspect_ratio: ASPECT_RATIO,
             viewport_height: VIEWPORT_H,
             viewport_width: VIEWPORT_W,
@@ -39,8 +40,18 @@ impl Default for Camera {
 }
 
 impl Camera {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(vfov: f64, aspect_ratio: f64) -> Self {
+        let theta = degrees_to_radians(vfov);
+        let h = (theta / 2.0).tan();
+        let view_h = 2.0 * h;
+        let view_w = aspect_ratio * view_h;
+        Self {
+            vfov,
+            aspect_ratio,
+            viewport_height: view_h,
+            viewport_width: view_w,
+            ..Self::default()
+        }
     }
 
     pub fn get_ray(&self, u: f64, v: f64) -> Ray {

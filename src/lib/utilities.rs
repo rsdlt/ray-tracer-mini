@@ -5,6 +5,10 @@ pub const INFINITY: f64 = f64::INFINITY;
 pub const EPSILON: f64 = 0.001;
 pub const NEAR_ZERO: f64 = 1e-8;
 
+pub const ASPECT_RATIO_W: f64 = 16.0;
+pub const ASPECT_RATIO_H: f64 = 9.0;
+pub const ASPECT_RATIO: f64 = ASPECT_RATIO_W / ASPECT_RATIO_H;
+
 pub fn degrees_to_radians(degrees: f64) -> f64 {
     degrees * PI / 180.0
 }
