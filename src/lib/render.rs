@@ -22,8 +22,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
     if let Some(hit) = world.hit(&ray, 0.001, INFINITY) {
         // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
         // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
-
-        // let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
+        // diffuse render 3:  let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
         // return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
 
         let mut scattered = Ray::new(Point3::default(), Vec3::default());

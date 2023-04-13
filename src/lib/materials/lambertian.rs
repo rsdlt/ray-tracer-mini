@@ -35,7 +35,6 @@ impl Material for Lambertian {
     }
 
     fn clone_box(&self) -> Box<dyn Material> {
-        let temp = self.clone();
-        Box::new(temp)
+        Box::new(*self)
     }
 }

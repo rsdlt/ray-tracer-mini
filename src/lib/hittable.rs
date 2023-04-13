@@ -13,10 +13,6 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    fn get_material(&self) -> &dyn Material {
-        &*self.material
-    }
-
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3) {
         self.front_face = Vec3::dot(ray.direction(), outward_normal) < 0.0;
         self.normal = match self.front_face {
