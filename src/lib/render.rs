@@ -11,7 +11,7 @@ use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};
-use crate::utilities::{random_float, INFINITY, PI};
+use crate::utilities::{random_float, INFINITY};
 use crate::vector::{Point3, Vec3};
 
 /// Render function renders a Scene and writes the result to an Image file.

@@ -12,21 +12,28 @@ use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, random_float_range, PI};
 use crate::vector::{Point3, Vec3};
 
+/// Type that collects a scene full of random spheres with three different materials.
 pub struct RandomSpheres {
+    /// Image component of the scene.
     pub image: Image,
+    /// Collection of spheres and its position in the scene.
     pub world: HittableList,
+    /// Camera for the scene.
     pub camera: Camera,
 }
 
 impl SceneConfig for RandomSpheres {
+    type Image = Image;
+    type World = HittableList;
+    type Camera = Camera;
     type Scene = RandomSpheres;
 
-    fn new_image() -> Image {
+    fn new_image() -> Self::Image {
         // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
         Image::new(256, 256, 50, 10)
     }
 
-    fn new_world() -> HittableList {
+    fn new_world() -> Self::World {
         // Create the ground
         let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
         let shape_ground = Box::new(Sphere::new(
@@ -98,7 +105,7 @@ impl SceneConfig for RandomSpheres {
         world
     }
 
-    fn new_camera(aspect_ratio: f64) -> Camera {
+    fn new_camera(aspect_ratio: f64) -> Self::Camera {
         // Camera
         let look_from = Point3::new(13.0, 2.0, 3.0);
         let look_at = Point3::new(0.0, 0.0, 0.0);
