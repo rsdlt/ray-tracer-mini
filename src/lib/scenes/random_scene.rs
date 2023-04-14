@@ -1,3 +1,7 @@
+//! This module defines a random scene that include several Sphere of different sizes and Materials.
+
+#![warn(missing_docs)]
+
 use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
@@ -5,6 +9,8 @@ use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, random_float_range};
 use crate::vector::Point3;
 
+/// Function that generates a random group of Spheres with different materials, collects them
+/// into a HittableList vector and returns it for rendering.
 pub fn generate_random_scene() -> HittableList {
     // Create the ground
     let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));

@@ -1,9 +1,15 @@
+//! This module defines the HitRecord and HitTable types used to capture ray intersections with
+//! shapes and collect Scenes, respectively.
+
+#![warn(missing_docs)]
+
 use crate::color::Color;
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
+/// The HitRecord struct is used to capture ray intersections with Shapes.
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
@@ -21,6 +27,7 @@ impl HitRecord {
         };
     }
 
+    /// Function creates and returns an owned HitRecord.
     pub fn new(
         p: Point3,
         normal: Vec3,
@@ -49,11 +56,16 @@ impl Default for HitRecord {
     }
 }
 
+/// Trait that defines the hit function used by Shapes that implement this trait, to capture ray
+/// intersections with them.
 pub trait Hittable {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
 
+/// Structure that allows the collection of Shapes to create a Scene.
+/// An instance is commonly defined as "world".
 pub struct HittableList {
+    /// Collection of objects that define a Scene to be rendered.
     pub objects: Vec<Box<dyn Hittable>>,
 }
 

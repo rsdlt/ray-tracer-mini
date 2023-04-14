@@ -1,3 +1,6 @@
+//! This module defines the Dielectric Material and its implementation of the Material trait.
+
+#![warn(missing_docs)]
 #![allow(unused_assignments)]
 
 use crate::color::Color;
@@ -7,12 +10,14 @@ use crate::ray::Ray;
 use crate::utilities::random_float;
 use crate::vector::Vec3;
 
+/// The Dielectric Material type with the Index of Refraction property.
 #[derive(Copy, Clone, Debug)]
 pub struct Dielectric {
     // index of refraction
     pub ir: f64,
 }
 impl Dielectric {
+    /// Function that creates and returns an owned Dielectric Material.
     pub fn new(ir: f64) -> Self {
         Self { ir }
     }

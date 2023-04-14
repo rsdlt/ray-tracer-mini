@@ -1,3 +1,6 @@
+//! The Ray Tracer Mini library.
+
+#![warn(missing_docs, missing_debug_implementations)]
 #![feature(exclusive_range_pattern)]
 
 pub mod camera;

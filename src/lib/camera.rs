@@ -1,3 +1,6 @@
+//! This module defines the Camera type including its associated functions, methods and constants.
+
+#![warn(missing_docs, missing_debug_implementations)]
 #![allow(dead_code)]
 
 use crate::ray::Ray;
@@ -8,6 +11,7 @@ const VIEWPORT_H: f64 = 2.0;
 const VIEWPORT_W: f64 = ASPECT_RATIO * VIEWPORT_H;
 const FOCAL_LENGTH: f64 = 1.0;
 
+/// The Camera type.
 pub struct Camera {
     pub look_from: Point3,
     pub look_at: Point3,

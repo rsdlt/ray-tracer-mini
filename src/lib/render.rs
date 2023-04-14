@@ -1,3 +1,6 @@
+//! This module provides the functionality to render Scenes and write an Image file as output.
+
+#![warn(missing_docs, missing_debug_implementations)]
 #![allow(unused_assignments, clippy::write_with_newline)]
 
 use std::fs::File;
@@ -12,35 +15,7 @@ use crate::scenes::random_scene;
 use crate::utilities::{random_float, ASPECT_RATIO, INFINITY, PI};
 use crate::vector::{Point3, Vec3};
 
-fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
-    // Recursion base case: if exceeded the ray bounce limit, no more light is gathered
-    if depth == 0 {
-        return Color::black();
-    }
-
-    if let Some(hit) = world.hit(ray, 0.001, INFINITY) {
-        // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
-        // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
-        // diffuse render 3:  let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
-        // return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
-
-        let mut scattered = Ray::new(Point3::default(), Vec3::default());
-        let mut attenuation = Color::black();
-        if hit
-            .material
-            .scatter(ray, &hit, &mut attenuation, &mut scattered)
-        {
-            return attenuation * ray_color(&scattered, world, depth - 1);
-        }
-        return Color::black();
-    }
-
-    let unit_direction = ray.direction().to_unit();
-    let t = 0.5 * (unit_direction.y + 1.0);
-
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
-}
-
+/// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
     // Camera
     let look_from = Point3::new(13.0, 2.0, 3.0);
@@ -90,10 +65,39 @@ pub fn render() -> Result<File, std::io::Error> {
                 let ray = camera.get_ray(u, v);
                 pixel_color = pixel_color + ray_color(&ray, &world, max_depth);
             }
-            Color::write_color(&mut line, &pixel_color, samples_per_pixel);
+            Color::write_color_ppm(&mut line, &pixel_color, samples_per_pixel);
         }
     }
     write!(img_file, "{}", line)?;
 
     Ok(img_file)
+}
+
+fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
+    // Recursion base case: if exceeded the ray bounce limit, no more light is gathered
+    if depth == 0 {
+        return Color::black();
+    }
+
+    if let Some(hit) = world.hit(ray, 0.001, INFINITY) {
+        // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
+        // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
+        // diffuse render 3:  let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
+        // return 0.5 * ray_color(&Ray::new(hit.p, target - hit.p), world, depth - 1);
+
+        let mut scattered = Ray::new(Point3::default(), Vec3::default());
+        let mut attenuation = Color::black();
+        if hit
+            .material
+            .scatter(ray, &hit, &mut attenuation, &mut scattered)
+        {
+            return attenuation * ray_color(&scattered, world, depth - 1);
+        }
+        return Color::black();
+    }
+
+    let unit_direction = ray.direction().to_unit();
+    let t = 0.5 * (unit_direction.y + 1.0);
+
+    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }

@@ -1,15 +1,21 @@
+//! This module defines the Metal Material and its implementation of the Material trait.  
+
+#![warn(missing_docs)]
+
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
+/// The Metal material type with the albedo and fuzz properties.
 #[derive(Copy, Clone, Debug)]
 pub struct Metal {
     pub albedo: Color,
     pub fuzz: f64,
 }
 impl Metal {
+    /// Function creates and returns an owned Metal material.
     pub fn new(albedo: Color, fuzz: f64) -> Self {
         Self { albedo, fuzz }
     }

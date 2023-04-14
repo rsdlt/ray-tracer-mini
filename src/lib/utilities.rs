@@ -1,25 +1,38 @@
+//! The utilities module provides helper constants and functions for computing
+//! and configuring values in 3D.
+
+#![warn(missing_docs, missing_debug_implementations)]
+
 use rand::prelude::*;
 
+/// Pi constant in f64 type.
 pub const PI: f64 = std::f64::consts::PI;
+/// Infinity constant in f64 type.
 pub const INFINITY: f64 = f64::INFINITY;
+/// Epsilon constant utilized for comparison of f64 values.
 pub const EPSILON: f64 = 0.001;
+/// Near_zero is utilized in limiting rendering computations when values approach zero.
 pub const NEAR_ZERO: f64 = 1e-8;
 
+/// Aspect ratio Width of the Image and the Camera.
 pub const ASPECT_RATIO_W: f64 = 3.0;
+/// Aspect ratio Height of the Image and the Camera.
 pub const ASPECT_RATIO_H: f64 = 2.0;
+/// Aspect ratio of the Image and the Camera.
 pub const ASPECT_RATIO: f64 = ASPECT_RATIO_W / ASPECT_RATIO_H;
 
+/// Function to convert from degrees to radians.
 pub fn degrees_to_radians(degrees: f64) -> f64 {
     degrees * PI / 180.0
 }
 
-// Return real random in [0, 1)
+/// Function that return f64 random values in the [0, 1) range.
 pub fn random_float() -> f64 {
     let mut rng = thread_rng();
     rng.gen_range(0.0..=1.0)
 }
 
-// Return real random in [min, max)
+/// Function that returns real random values in the [min, max) range.
 pub fn random_float_range(min: f64, max: f64) -> f64 {
     min + (max - min) * random_float()
 }

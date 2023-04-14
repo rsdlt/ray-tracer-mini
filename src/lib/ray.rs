@@ -1,5 +1,10 @@
+//! This module defines the Ray type, its functions and methods.
+
+#![warn(missing_docs, missing_debug_implementations)]
+
 use crate::vector::{Point3, Vec3};
 
+/// The Ray type that contains a Point3 Origin and a Vec3 Direction.
 #[derive(Debug)]
 pub struct Ray {
     pub(crate) orig: Point3,

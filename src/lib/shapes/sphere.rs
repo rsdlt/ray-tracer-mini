@@ -1,15 +1,24 @@
+//! This module defines the Sphere type and its implementation of the Hittable trait.
+
+#![warn(missing_docs)]
+
 use crate::hittable::{HitRecord, Hittable};
 use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
+/// A Sphere with center, radius and material.
 pub struct Sphere {
+    /// Location of the center of the Sphere.
     center: Point3,
+    /// Radius of the Sphere.
     radius: f64,
+    /// Material for the Sphere represented as a Trait object.
     material: Box<dyn Material>,
 }
 
 impl Sphere {
+    /// Function returns an owned Sphere.
     pub fn new(center: Point3, radius: f64, material: Box<dyn Material>) -> Self {
         Self {
             center,

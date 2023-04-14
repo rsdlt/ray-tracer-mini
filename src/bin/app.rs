@@ -1,3 +1,10 @@
+#![warn(missing_docs, missing_debug_implementations)]
+
+/*!
+ Ray Tracer Mini is a raytracer built following the  [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+ book by Peter Shirley.
+*/
+
 use raytracer::render::render;
 use std::time::SystemTime;
 

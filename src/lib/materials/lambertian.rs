@@ -1,3 +1,6 @@
+//! This module defines the Lambertian Material and its implementation of the Material trait.
+
+#![warn(missing_docs)]
 #![allow(unused_variables)]
 
 use crate::color::Color;
@@ -7,11 +10,13 @@ use crate::ray::Ray;
 
 use crate::vector::Vec3;
 
+/// The Lambertian type with the albedo property.
 #[derive(Copy, Clone, Debug)]
 pub struct Lambertian {
     pub albedo: Color,
 }
 impl Lambertian {
+    /// Function creates and returns an owned Lambertian material.
     pub fn new(albedo: Color) -> Self {
         Self { albedo }
     }

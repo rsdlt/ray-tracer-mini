@@ -1,15 +1,25 @@
+//! The vector module implements the functionality for Vec3 and Point3 types,
+//! their transformations, associated functions and methods.
+
+#![warn(missing_docs, missing_debug_implementations)]
+
 use crate::color::Color;
 use crate::utilities::{random_float, random_float_range, EPSILON, NEAR_ZERO};
 use derive_more::{Add, Neg, Sub};
 use std::ops::{Div, Mul};
 
+/// Type representing a geometric 3D vector with X, Y and Z coordinates.
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
 pub struct Vec3 {
+    /// Component in the X coordinate.
     pub x: f64,
+    /// Component in the Y coordinate.
     pub y: f64,
+    /// Component in the Z coordinate.
     pub z: f64,
 }
 
+/// Type alias representing a Point in 3D with X, Y and Z components.  
 pub type Point3 = Vec3;
 
 impl Vec3 {
@@ -24,10 +34,12 @@ impl Vec3 {
         v - 2.0 * Vec3::dot(v, n) * n
     }
 
+    /// Function returns true if the vector is close to zero in all coordinates.
     pub fn near_zero(&self) -> bool {
-        // return true if the vector is close to zero in all dimensions.
         self.x.abs() < NEAR_ZERO && self.y.abs() < NEAR_ZERO && self.z.abs() < NEAR_ZERO
     }
+
+    /// Function that returns a random 3D Vector or Point3.
     pub fn random() -> Self {
         Self {
             x: random_float(),
@@ -36,6 +48,7 @@ impl Vec3 {
         }
     }
 
+    /// Function that returns a random 3D Vector or Point3 clamped to min and max values.
     pub fn random_range(min: f64, max: f64) -> Self {
         Self {
             x: random_float_range(min, max),
@@ -87,6 +100,7 @@ impl Vec3 {
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
+
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
@@ -103,18 +117,22 @@ impl Vec3 {
         }
     }
 
+    /// Function returns a new unit vector from another vector.
     pub fn unit(vec: Self) -> Self {
         vec / vec.length()
     }
 
+    /// Function transform a vector to a unit vector.
     pub fn to_unit(&self) -> Self {
         *self / self.length()
     }
 
+    /// Function creates a new vector with X, Y and Z coordinates.
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
 
+    /// Function returns a new vector filled with 'zero' values in all coordinates.  
     pub fn zeroes() -> Self {
         Self {
             x: 0.0,
@@ -123,6 +141,7 @@ impl Vec3 {
         }
     }
 
+    /// Function returns a new vector filled with 'one' values in all coordinates.  
     pub fn ones() -> Self {
         Self {
             x: 1.0,

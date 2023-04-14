@@ -1,18 +1,29 @@
+//! This module defines a Color type in the Red-Green-Blue form, including its associated functions,
+//! methods and transformations.  
+
+#![warn(missing_docs, missing_debug_implementations)]
+
 use crate::utilities::EPSILON;
 use crate::vector::Vec3;
 use derive_more::{Add, Neg, Sub};
 use rand::prelude::*;
 use std::ops::{Div, Mul};
 
+/// The Color type in RGB form.
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
 pub struct Color {
+    /// Red component.
     pub r: f64,
+    /// Green component.
     pub g: f64,
+    /// Blue component.
     pub b: f64,
 }
 
 impl Color {
-    pub fn write_color(line: &mut String, color: &Color, samples_per_pixel: usize) {
+    /// Function that writes an RGB color in the form of (0,90,255) to a String in the format required
+    /// by the PPM image format.
+    pub fn write_color_ppm(line: &mut String, color: &Color, samples_per_pixel: usize) {
         // Divide color by # of samples and gamma-correct for gamma 2.0
         let scale = 1.0 / (samples_per_pixel as f64);
         let (r, g, b) = (
@@ -31,6 +42,7 @@ impl Color {
         );
     }
 
+    /// Function returns a random RGB color clamped to the min and max boundaries.
     pub fn random(min: f64, max: f64) -> Self {
         Self {
             r: thread_rng().gen_range(min.clamp(0.0, 0.999)..max.clamp(0.0, 0.999)),
@@ -39,10 +51,12 @@ impl Color {
         }
     }
 
+    /// Function returns a new RGB color.
     pub fn new(r: f64, g: f64, b: f64) -> Self {
         Self { r, g, b }
     }
 
+    /// Function returns the white color.
     pub fn white() -> Self {
         Self {
             r: 1.0,
@@ -51,6 +65,7 @@ impl Color {
         }
     }
 
+    /// Function returns the black color.
     pub fn black() -> Self {
         Self {
             r: 0.0,
@@ -58,6 +73,8 @@ impl Color {
             b: 0.0,
         }
     }
+
+    /// Function returns the red color.
     pub fn red() -> Self {
         Self {
             r: 1.0,
@@ -65,6 +82,7 @@ impl Color {
             b: 0.0,
         }
     }
+    /// Function returns the green color.
     pub fn green() -> Self {
         Self {
             r: 0.0,
@@ -72,6 +90,8 @@ impl Color {
             b: 0.0,
         }
     }
+
+    /// Function returns the blue color.
     pub fn blue() -> Self {
         Self {
             r: 0.0,
