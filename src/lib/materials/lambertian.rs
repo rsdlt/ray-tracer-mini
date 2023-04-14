@@ -1,7 +1,10 @@
+#![allow(unused_variables)]
+
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::materials::Material;
 use crate::ray::Ray;
+
 use crate::vector::Vec3;
 
 #[derive(Copy, Clone, Debug)]

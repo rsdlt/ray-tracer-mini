@@ -1,3 +1,5 @@
+#![allow(unused_assignments)]
+
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::materials::Material;

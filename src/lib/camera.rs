@@ -1,5 +1,7 @@
+#![allow(dead_code)]
+
 use crate::ray::Ray;
-use crate::utilities::{degrees_to_radians, ASPECT_RATIO, ASPECT_RATIO_H, ASPECT_RATIO_W};
+use crate::utilities::{degrees_to_radians, ASPECT_RATIO};
 use crate::vector::{Point3, Vec3};
 
 const VIEWPORT_H: f64 = 2.0;

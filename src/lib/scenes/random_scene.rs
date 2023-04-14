@@ -1,11 +1,9 @@
-use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
-use crate::ray::Ray;
 use crate::shapes::sphere::Sphere;
-use crate::utilities::{random_float, random_float_range, ASPECT_RATIO, INFINITY, PI};
-use crate::vector::{Point3, Vec3};
+use crate::utilities::{random_float, random_float_range};
+use crate::vector::Point3;
 
 pub fn generate_random_scene() -> HittableList {
     // Create the ground

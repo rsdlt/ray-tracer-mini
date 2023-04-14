@@ -7,10 +7,8 @@ use std::path::Path;
 use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
 use crate::scenes::random_scene;
-use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, ASPECT_RATIO, INFINITY, PI};
 use crate::vector::{Point3, Vec3};
 
@@ -20,7 +18,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
         return Color::black();
     }
 
-    if let Some(hit) = world.hit(&ray, 0.001, INFINITY) {
+    if let Some(hit) = world.hit(ray, 0.001, INFINITY) {
         // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
         // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
         // diffuse render 3:  let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
@@ -30,7 +28,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
         let mut attenuation = Color::black();
         if hit
             .material
-            .scatter(&ray, &hit, &mut attenuation, &mut scattered)
+            .scatter(ray, &hit, &mut attenuation, &mut scattered)
         {
             return attenuation * ray_color(&scattered, world, depth - 1);
         }
@@ -50,7 +48,7 @@ pub fn render() -> Result<File, std::io::Error> {
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let aperture = 0.1;
-    let big_r = (PI / 4.0).cos();
+    let _big_r = (PI / 4.0).cos();
 
     let camera = Camera::new(
         look_from,
