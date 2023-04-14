@@ -1,38 +1,57 @@
 //! This module defines the Camera type including its associated functions, methods and constants.
 
-#![warn(missing_docs, missing_debug_implementations)]
-#![allow(dead_code)]
+#![warn(missing_docs)]
+#![allow(dead_code, missing_debug_implementations)]
 
+use crate::image::ASPECT_RATIO_DEFAULT;
 use crate::ray::Ray;
-use crate::utilities::{degrees_to_radians, ASPECT_RATIO};
+use crate::utilities::degrees_to_radians;
 use crate::vector::{Point3, Vec3};
 
-const VIEWPORT_H: f64 = 2.0;
-const VIEWPORT_W: f64 = ASPECT_RATIO * VIEWPORT_H;
-const FOCAL_LENGTH: f64 = 1.0;
+const VIEWPORT_HEIGHT_DEFAULT: f64 = 2.0;
+const VIEWPORT_WIDTH_DEFAULT: f64 = ASPECT_RATIO_DEFAULT * VIEWPORT_HEIGHT_DEFAULT;
+const FOCAL_LENGTH_DEFAULT: f64 = 1.0;
 
-/// The Camera type.
+/// The Camera type used to visualize a Scene.
 pub struct Camera {
+    /// Point in 3D space where the Camera will be positioned in the Scene.
     pub look_from: Point3,
+    /// Point in 3D space where the Camera is pointing at.
     pub look_at: Point3,
-    pub vup: Vec3,
-    pub vfov: f64, // vertical field-of-view in degrees
+    /// Vector in 3D space used to specify what is the 'up' direction for the Camera.
+    pub view_up: Vec3,
+    /// Vertical Field of View in degrees.
+    pub vfov: f64,
+    /// Aspect ratio of the Image.
     pub aspect_ratio: f64,
+    /// Aperture of the Camera.
     pub aperture: f64,
+    /// Focus ditance.
     pub focus_dist: f64,
 
+    /// Viewport height of the Camera.
     viewport_height: f64,
+    /// Viewport width of the Camera.
     viewport_width: f64,
+    /// Focal length of the Camera.
     focal_length: f64,
 
+    /// Location in 3D space where Rays are originating, which is the Viewport of the Camera.
     origin: Point3,
+    /// Horizontal axis of the Viewport of the Camera.
     horizontal: Vec3,
+    /// Vertical axis of the Viewport of the Camera.
     vertical: Vec3,
+    /// Lower left corner of the Viewport of the Camera.
     lower_left_corner: Vec3,
 
+    /// Orthonormal 'u' axis (horizontal) of the Camera orientation.
     u: Vec3,
+    /// Orthonormal 'v' axis (vertical) of the Camera orientation.
     v: Vec3,
+    /// Orthonormal 'w' axis (depth) of the Camera orientation.
     w: Vec3,
+    /// Camera len's radius.
     lens_radius: f64,
 }
 
@@ -41,23 +60,23 @@ impl Default for Camera {
         Self {
             look_from: Point3::default(),
             look_at: Point3::default(),
-            vup: Vec3::default(),
+            view_up: Vec3::default(),
             vfov: 0.0,
-            aspect_ratio: ASPECT_RATIO,
+            aspect_ratio: ASPECT_RATIO_DEFAULT,
             aperture: 0.0,
             focus_dist: 0.0,
 
-            viewport_height: VIEWPORT_H,
-            viewport_width: VIEWPORT_W,
-            focal_length: FOCAL_LENGTH,
+            viewport_height: VIEWPORT_HEIGHT_DEFAULT,
+            viewport_width: VIEWPORT_WIDTH_DEFAULT,
+            focal_length: FOCAL_LENGTH_DEFAULT,
 
             origin: Point3::zeroes(),
-            horizontal: Vec3::new(VIEWPORT_W, 0.0, 0.0),
-            vertical: Vec3::new(0.0, VIEWPORT_H, 0.0),
+            horizontal: Vec3::new(VIEWPORT_WIDTH_DEFAULT, 0.0, 0.0),
+            vertical: Vec3::new(0.0, VIEWPORT_HEIGHT_DEFAULT, 0.0),
             lower_left_corner: Point3::zeroes()
-                - Vec3::new(VIEWPORT_W, 0.0, 0.0) / 2.0
-                - Vec3::new(0.0, VIEWPORT_H, 0.0) / 2.0
-                - Vec3::new(0.0, 0.0, FOCAL_LENGTH),
+                - Vec3::new(VIEWPORT_WIDTH_DEFAULT, 0.0, 0.0) / 2.0
+                - Vec3::new(0.0, VIEWPORT_HEIGHT_DEFAULT, 0.0) / 2.0
+                - Vec3::new(0.0, 0.0, FOCAL_LENGTH_DEFAULT),
             u: Vec3::default(),
             v: Vec3::default(),
             w: Vec3::default(),
@@ -67,6 +86,7 @@ impl Default for Camera {
 }
 
 impl Camera {
+    /// Function that creates and returns an owned Camera.
     pub fn new(
         look_from: Point3,
         look_at: Point3,
@@ -94,7 +114,7 @@ impl Camera {
         Self {
             look_from,
             look_at,
-            vup,
+            view_up: vup,
             vfov,
             aspect_ratio,
             viewport_height: view_h,
@@ -111,6 +131,7 @@ impl Camera {
         }
     }
 
+    /// Function that creates and returns an owned Ray to be used by the Camera.
     pub fn get_ray(&self, s: f64, t: f64) -> Ray {
         let rd = self.lens_radius * Vec3::random_in_unit_disk();
         let offset = self.u * rd.x + self.v * rd.y;
@@ -123,18 +144,22 @@ impl Camera {
         }
     }
 
+    /// Function that returns the aspect ratio of a Camera.
     pub fn aspect_ratio(&self) -> f64 {
         self.aspect_ratio
     }
 
+    /// Function that returns the Viewport height of the Camera.
     pub fn viewport_height(&self) -> f64 {
         self.viewport_height
     }
 
+    /// Function that returns the Viewport width of the Camera.
     pub fn viewport_width(&self) -> f64 {
         self.viewport_width
     }
 
+    /// Function that returns the Focal length of the Camera.
     pub fn focal_length(&self) -> f64 {
         self.focal_length
     }

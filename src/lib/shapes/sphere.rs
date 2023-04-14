@@ -1,6 +1,7 @@
 //! This module defines the Sphere type and its implementation of the Hittable trait.
 
 #![warn(missing_docs)]
+#![allow(missing_debug_implementations)]
 
 use crate::hittable::{HitRecord, Hittable};
 use crate::materials::Material;

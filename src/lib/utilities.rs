@@ -14,12 +14,6 @@ pub const EPSILON: f64 = 0.001;
 /// Near_zero is utilized in limiting rendering computations when values approach zero.
 pub const NEAR_ZERO: f64 = 1e-8;
 
-/// Aspect ratio Width of the Image and the Camera.
-pub const ASPECT_RATIO_W: f64 = 3.0;
-/// Aspect ratio Height of the Image and the Camera.
-pub const ASPECT_RATIO_H: f64 = 2.0;
-/// Aspect ratio of the Image and the Camera.
-pub const ASPECT_RATIO: f64 = ASPECT_RATIO_W / ASPECT_RATIO_H;
 
 /// Function to convert from degrees to radians.
 pub fn degrees_to_radians(degrees: f64) -> f64 {

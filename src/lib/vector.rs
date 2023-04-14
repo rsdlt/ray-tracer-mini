@@ -23,6 +23,7 @@ pub struct Vec3 {
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    /// Function that calculates and returns an owned refracted vector.
     pub fn refract(uv: Vec3, n: Vec3, etai_over_etat: f64) -> Self {
         let cos_theta = f64::min(Vec3::dot(-uv, n), 1.0);
         let r_out_perp = etai_over_etat * (uv + cos_theta * n);
@@ -30,6 +31,7 @@ impl Vec3 {
         r_out_perp + r_out_parallel
     }
 
+    /// Function that calculates and returns an owned reflected vector.
     pub fn reflect(v: Vec3, n: Vec3) -> Self {
         v - 2.0 * Vec3::dot(v, n) * n
     }
@@ -57,7 +59,8 @@ impl Vec3 {
         }
     }
 
-    pub fn random_in_unit_disk() -> Self {
+    /// Function that generates random Points inside a unit disk to accomplish Defocus Blur.
+    pub fn random_in_unit_disk() -> Point3 {
         loop {
             let p = Vec3::new(
                 random_float_range(-1.0, 1.0),
@@ -72,7 +75,8 @@ impl Vec3 {
         }
     }
 
-    pub fn random_in_unit_sphere() -> Self {
+    /// Function that pics a random Point in a unit radius sphere to accomplish Diffuse Materials.
+    pub fn random_in_unit_sphere() -> Point3 {
         loop {
             let p = Vec3::random_range(-1.0, 1.0);
             if p.length_squared() >= 1.0 {
@@ -83,10 +87,14 @@ impl Vec3 {
         }
     }
 
+    /// Function that picks random Points in the surface of the unit spheres and normalizes them, to
+    /// accomplish true Lambertian reflection.
     pub fn random_unit_vector() -> Self {
         Self::unit(Self::random_in_unit_sphere())
     }
 
+    /// Function that provides an alternative diffuse formulation by providing a uniform scatter direction
+    /// for angles away from hit point.
     pub fn random_in_hemisphere(normal: &Vec3) -> Self {
         let in_unit_sphere = Vec3::random_in_unit_sphere();
         // check if in same hemisphere as the normal
@@ -97,18 +105,22 @@ impl Vec3 {
         }
     }
 
+    /// Function that calculates the length squared of a vector.
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
+    /// Function that calculates and returns the length of a vector.
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
+    /// Function that calculates the Dot product of two vectors.
     pub fn dot(lhs: Self, rhs: Self) -> f64 {
         lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z
     }
 
+    /// Function that calculates the Cross product of two vectors and returns a new owned vector.
     pub fn cross(lhs: Self, rhs: Self) -> Self {
         Self {
             x: lhs.y * rhs.z - lhs.z * rhs.y,

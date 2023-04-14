@@ -11,7 +11,7 @@ use crate::vector::Point3;
 
 /// Function that generates a random group of Spheres with different materials, collects them
 /// into a HittableList vector and returns it for rendering.
-pub fn generate_random_scene() -> HittableList {
+pub fn generate() -> HittableList {
     // Create the ground
     let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     let shape_ground = Box::new(Sphere::new(
@@ -41,7 +41,6 @@ pub fn generate_random_scene() -> HittableList {
                     let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                     world.add(sphere);
-                    dbg!("diffuse!");
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = Color::random(0.5, 1.0);
@@ -50,14 +49,12 @@ pub fn generate_random_scene() -> HittableList {
                     let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                     world.add(sphere);
-                    dbg!("metal!");
                 } else {
                     // glass
                     let sphere_material = Box::new(Dielectric::new(1.5));
                     let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                     world.add(sphere);
-                    dbg!("glass!");
                 }
             }
         }

@@ -13,6 +13,7 @@ use crate::vector::Vec3;
 /// The Lambertian type with the albedo property.
 #[derive(Copy, Clone, Debug)]
 pub struct Lambertian {
+    /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
 }
 impl Lambertian {

@@ -11,7 +11,9 @@ use crate::vector::Vec3;
 /// The Metal material type with the albedo and fuzz properties.
 #[derive(Copy, Clone, Debug)]
 pub struct Metal {
+    /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
+    /// Proportion of 'fuzziness' of a reflection.
     pub fuzz: f64,
 }
 impl Metal {

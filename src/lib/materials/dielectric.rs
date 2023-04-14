@@ -13,7 +13,7 @@ use crate::vector::Vec3;
 /// The Dielectric Material type with the Index of Refraction property.
 #[derive(Copy, Clone, Debug)]
 pub struct Dielectric {
-    // index of refraction
+    /// Index of refraction
     pub ir: f64,
 }
 impl Dielectric {

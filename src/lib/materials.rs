@@ -12,6 +12,8 @@ use crate::ray::Ray;
 
 /// The Material trait.
 pub trait Material {
+    /// Function that returns true if the material produces a scattered Ray. If scattered then, it
+    /// indicates how much attenuation via mutation.
     fn scatter(
         &self,
         r_in: &Ray,
@@ -20,7 +22,7 @@ pub trait Material {
         scattered: &mut Ray,
     ) -> bool;
 
-    /// This is a helper function to the implementation of the Clone trait for the Material trait objects..
+    /// Helper function to the implementation of the Clone trait for the Material trait objects..
     fn clone_box(&self) -> Box<dyn Material>;
 }
 
