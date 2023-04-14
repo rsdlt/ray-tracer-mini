@@ -7,61 +7,34 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::image::Image;
 use crate::ray::Ray;
-use crate::scenes::scene_random_spheres;
+use crate::scenes::{scene_random_spheres, SceneConfig};
 use crate::utilities::{random_float, INFINITY, PI};
 use crate::vector::{Point3, Vec3};
 
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
-    // Camera
-
-    // Image
-    // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
-    let image = Image::new(256, 256, 50, 10);
-
-    // Camera
-    let look_from = Point3::new(13.0, 2.0, 3.0);
-    let look_at = Point3::new(0.0, 0.0, 0.0);
-    let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = 10.0;
-    let aperture = 0.1;
-    let _big_r = (PI / 4.0).cos();
-
-    let camera = Camera::new(
-        look_from,
-        look_at,
-        vup,
-        20.0,
-        image.aspect_ratio,
-        aperture,
-        dist_to_focus,
-    );
-
-    // Scene, also known as 'world'
-    let world = scene_random_spheres::generate();
+    let scene = scene_random_spheres::RandomSpheres::generate_scene();
 
     // Render
     let path = Path::new("image.ppm");
     let mut img_file = File::create(path)?;
-    let mut line = format!("P3\n{} {} \n255\n", image.width, image.height);
+    let mut line = format!("P3\n{} {} \n255\n", scene.image.width, scene.image.height);
 
-    for j in (0..image.height).rev() {
+    for j in (0..scene.image.height).rev() {
         println!("Scanlines remaining: {}", j);
-        for i in 0..image.width {
+        for i in 0..scene.image.width {
             let mut pixel_color = Color::black();
 
-            for _s in 0..image.samples_per_pixel {
-                let u = (i as f64 + random_float()) / (image.width as f64 - 1.0);
-                let v = (j as f64 + random_float()) / (image.height as f64 - 1.0);
-                let ray = camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(&ray, &world, image.max_depth);
+            for _s in 0..scene.image.samples_per_pixel {
+                let u = (i as f64 + random_float()) / (scene.image.width as f64 - 1.0);
+                let v = (j as f64 + random_float()) / (scene.image.height as f64 - 1.0);
+                let ray = scene.camera.get_ray(u, v);
+                pixel_color = pixel_color + ray_color(&ray, &scene.world, scene.image.max_depth);
             }
-            Color::write_color_ppm(&mut line, &pixel_color, image.samples_per_pixel);
+            Color::write_color_ppm(&mut line, &pixel_color, scene.image.samples_per_pixel);
         }
     }
     write!(img_file, "{}", line)?;

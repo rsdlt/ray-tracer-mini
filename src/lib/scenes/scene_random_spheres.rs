@@ -2,83 +2,131 @@
 
 #![warn(missing_docs)]
 
+use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
+use crate::image::Image;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
+use crate::scenes::SceneConfig;
 use crate::shapes::sphere::Sphere;
-use crate::utilities::{random_float, random_float_range};
-use crate::vector::Point3;
+use crate::utilities::{random_float, random_float_range, PI};
+use crate::vector::{Point3, Vec3};
 
-/// Function that generates a random group of Spheres with different materials, collects them
-/// into a HittableList vector and returns it for rendering.
-pub fn generate() -> HittableList {
-    // Create the ground
-    let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    let shape_ground = Box::new(Sphere::new(
-        Point3::new(0.0, -1_000.0, 0.0),
-        1_000.0,
-        material_ground,
-    ));
+pub struct RandomSpheres {
+    pub image: Image,
+    pub world: HittableList,
+    pub camera: Camera,
+}
 
-    // Create the world scene
-    let mut world = HittableList::new(shape_ground);
+impl SceneConfig for RandomSpheres {
+    type Scene = RandomSpheres;
 
-    // Create the scene
-    for a in -11..11 {
-        for b in -11..11 {
-            let choose_mat = random_float();
-            let center = Point3::new(
-                a as f64 + 0.9 * random_float(),
-                0.2,
-                b as f64 + 0.9 * random_float(),
-            );
+    fn new_image() -> Image {
+        // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
+        Image::new(256, 256, 50, 10)
+    }
 
-            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
-                if choose_mat < 0.8 {
-                    // diffuse
-                    let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
-                    let sphere_material = Box::new(Lambertian::new(albedo));
-                    let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+    fn new_world() -> HittableList {
+        // Create the ground
+        let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+        let shape_ground = Box::new(Sphere::new(
+            Point3::new(0.0, -1_000.0, 0.0),
+            1_000.0,
+            material_ground,
+        ));
 
-                    world.add(sphere);
-                } else if choose_mat < 0.95 {
-                    // metal
-                    let albedo = Color::random(0.5, 1.0);
-                    let fuzz = random_float_range(0.0, 0.5);
-                    let sphere_material = Box::new(Metal::new(albedo, fuzz));
-                    let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+        // Create the world scene
+        let mut world = HittableList::new(shape_ground);
 
-                    world.add(sphere);
-                } else {
-                    // glass
-                    let sphere_material = Box::new(Dielectric::new(1.5));
-                    let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+        // Create the scene
+        for a in -11..11 {
+            for b in -11..11 {
+                let choose_mat = random_float();
+                let center = Point3::new(
+                    a as f64 + 0.9 * random_float(),
+                    0.2,
+                    b as f64 + 0.9 * random_float(),
+                );
 
-                    world.add(sphere);
+                if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                    if choose_mat < 0.8 {
+                        // diffuse
+                        let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
+                        let sphere_material = Box::new(Lambertian::new(albedo));
+                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+
+                        world.add(sphere);
+                    } else if choose_mat < 0.95 {
+                        // metal
+                        let albedo = Color::random(0.5, 1.0);
+                        let fuzz = random_float_range(0.0, 0.5);
+                        let sphere_material = Box::new(Metal::new(albedo, fuzz));
+                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+
+                        world.add(sphere);
+                    } else {
+                        // glass
+                        let sphere_material = Box::new(Dielectric::new(1.5));
+                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+
+                        world.add(sphere);
+                    }
                 }
             }
         }
+        let material_1 = Box::new(Dielectric::new(1.5));
+        world.add(Box::new(Sphere::new(
+            Point3::new(0.0, 1.0, 0.0),
+            1.0,
+            material_1,
+        )));
+
+        let material_2 = Box::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+        world.add(Box::new(Sphere::new(
+            Point3::new(-4.0, 1.0, 0.0),
+            1.0,
+            material_2,
+        )));
+
+        let material_3 = Box::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+        world.add(Box::new(Sphere::new(
+            Point3::new(4.0, 1.0, 0.0),
+            1.0,
+            material_3,
+        )));
+
+        world
     }
-    let material_1 = Box::new(Dielectric::new(1.5));
-    world.add(Box::new(Sphere::new(
-        Point3::new(0.0, 1.0, 0.0),
-        1.0,
-        material_1,
-    )));
 
-    let material_2 = Box::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Box::new(Sphere::new(
-        Point3::new(-4.0, 1.0, 0.0),
-        1.0,
-        material_2,
-    )));
+    fn new_camera(aspect_ratio: f64) -> Camera {
+        // Camera
+        let look_from = Point3::new(13.0, 2.0, 3.0);
+        let look_at = Point3::new(0.0, 0.0, 0.0);
+        let vup = Vec3::new(0.0, 1.0, 0.0);
+        let dist_to_focus = 10.0;
+        let aperture = 0.1;
+        let _big_r = (PI / 4.0).cos();
 
-    let material_3 = Box::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Box::new(Sphere::new(
-        Point3::new(4.0, 1.0, 0.0),
-        1.0,
-        material_3,
-    )));
+        Camera::new(
+            look_from,
+            look_at,
+            vup,
+            20.0,
+            aspect_ratio,
+            aperture,
+            dist_to_focus,
+        )
+    }
 
-    world
+    fn generate_scene() -> Self::Scene {
+        let image = Self::new_image();
+        let camera = Self::new_camera(image.aspect_ratio);
+        let world = Self::new_world();
+
+        Self {
+            image,
+            camera,
+            world,
+        }
+    }
 }
