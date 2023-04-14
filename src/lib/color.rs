@@ -1,6 +1,7 @@
 use crate::utilities::EPSILON;
 use crate::vector::Vec3;
 use derive_more::{Add, Neg, Sub};
+use rand::prelude::*;
 use std::ops::{Div, Mul};
 
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
@@ -28,6 +29,14 @@ impl Color {
             )
             .as_str(),
         );
+    }
+
+    pub fn random(min: f64, max: f64) -> Self {
+        Self {
+            r: thread_rng().gen_range(min.clamp(0.0, 0.999)..max.clamp(0.0, 0.999)),
+            g: thread_rng().gen_range(min.clamp(0.0, 0.999)..max.clamp(0.0, 0.999)),
+            b: thread_rng().gen_range(min.clamp(0.0, 0.999)..max.clamp(0.0, 0.999)),
+        }
     }
 
     pub fn new(r: f64, g: f64, b: f64) -> Self {

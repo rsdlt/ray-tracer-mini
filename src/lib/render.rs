@@ -9,6 +9,7 @@ use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
+use crate::scenes::random_scene;
 use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, ASPECT_RATIO, INFINITY, PI};
 use crate::vector::{Point3, Vec3};
@@ -44,11 +45,11 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
 
 pub fn render() -> Result<File, std::io::Error> {
     // Camera
-    let look_from = Point3::new(3.0, 3.0, 2.0);
-    let look_at = Point3::new(0.0, 0.0, -1.0);
+    let look_from = Point3::new(13.0, 2.0, 3.0);
+    let look_at = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = (look_from - look_at).length();
-    let aperture = 2.0;
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
     let big_r = (PI / 4.0).cos();
 
     let camera = Camera::new(
@@ -62,49 +63,19 @@ pub fn render() -> Result<File, std::io::Error> {
     );
 
     // Image
+    // 1 thread: 1hr 30min
+    // let image_width = 600usize;
+    // let samples_per_pixel = 200_usize;
+    // let max_depth = 30_usize;
+
     let aspect_ratio = camera.aspect_ratio();
-    let image_width = 400_usize;
+    let image_width = 600usize;
     let image_height = (image_width as f64 / aspect_ratio) as usize;
-    let samples_per_pixel = 100_usize;
-    let max_depth = 50_usize;
+    let samples_per_pixel = 200_usize;
+    let max_depth = 30_usize;
 
     // World
-    let material_ground = Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let material_center = Box::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
-    let material_left = Box::new(Dielectric::new(1.5));
-    let material_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
-
-    let sphere_1 = Box::new(Sphere::new(
-        Point3::new(0.0, -100.5, -1.0),
-        100.0,
-        material_ground,
-    ));
-    let sphere_2 = Box::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        material_center,
-    ));
-    let sphere_3 = Box::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        0.5,
-        material_left.clone(),
-    ));
-    let sphere_4 = Box::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        -0.45,
-        material_left,
-    ));
-    let sphere_5 = Box::new(Sphere::new(
-        Point3::new(1.0, 0.0, -1.0),
-        0.5,
-        material_right,
-    ));
-
-    let mut world = HittableList::new(sphere_1);
-    world.add(sphere_2);
-    world.add(sphere_3);
-    world.add(sphere_4);
-    world.add(sphere_5);
+    let world = random_scene::generate_random_scene();
 
     // Render
     let path = Path::new("image.ppm");
