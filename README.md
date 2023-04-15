@@ -5,17 +5,6 @@ The ray tracer generates a random scene filled with spheres and leverages [Rayon
 
 ![Final Ray Traced Image](/img_history/image24.png)
 
-## Usage
-1. Configure image
-
-2. Build 
-```terminal
-cargo build -r
-```
-4. Run
-
-5. Check the image
-
 
 
 
