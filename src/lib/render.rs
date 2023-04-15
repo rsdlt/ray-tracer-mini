@@ -8,9 +8,11 @@ use std::fs::File;
 use std::io::Write;
 use std::ops::Add;
 use std::path::Path;
+use thousands::Separable;
 
 use crate::color::Color;
 use crate::hittable::HittableList;
+use crate::image::{ASPECT_RATIO_HEIGHT_DEFAULT, ASPECT_RATIO_WIDTH_DEFAULT};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};
@@ -51,6 +53,14 @@ pub fn render() -> Result<File, std::io::Error> {
         scene.image.width, scene.image.height
     ));
 
+    println!(
+        "\nRendering image now...\nWxH: {}x{} px\nAspect ratio: {}:{}\nRecursion depth:{}\nSamples per pixel: {}\n\
+        Number of shapes: {}\nEstimated calculations: {}\n",
+        scene.image.width, scene.image.height, ASPECT_RATIO_WIDTH_DEFAULT, ASPECT_RATIO_HEIGHT_DEFAULT,
+        scene.image.max_depth, scene.image.samples_per_pixel,  scene.world.total_shapes(),
+    (scene.image.width * scene.image.height * scene.image.max_depth * scene.image.samples_per_pixel).separate_with_commas()
+    );
+
     // --- Parallel Iteration to calculate Lines per Render Image (Returns Render)
     let pixels_height_vec = vec![ScanString("".to_string()); scene.image.height];
     render = render
@@ -60,7 +70,6 @@ pub fn render() -> Result<File, std::io::Error> {
             .rev()
             .map(|(jdx, line)| {
                 // --- Parallel Iteration to calculate Pixels per Line (returns a Scan Line)
-                println!("Scan lines remaining: {}", jdx);
                 let pixels_width_vec = vec![ScanString("".to_string()); scene.image.width];
                 let my_scan_line = pixels_width_vec
                     .par_iter()

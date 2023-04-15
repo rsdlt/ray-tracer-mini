@@ -88,6 +88,11 @@ impl HittableList {
         Self { shapes: vec![] }
     }
 
+    /// Returns the number of shapes in the scene.
+    pub fn total_shapes(&self) -> usize {
+        self.shapes.len()
+    }
+
     /// Function that takes in a Ray, and "counts" a hit if "t" is between t_man and t_max boundaries.
     pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut hit_something: Option<HitRecord> = None;
