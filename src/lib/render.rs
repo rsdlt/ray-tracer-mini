@@ -37,9 +37,6 @@ impl std::iter::Sum for ScanString {
         my_string
     }
 }
-fn ray_string() -> ScanString {
-    ScanString("new token\n".to_string())
-}
 
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
