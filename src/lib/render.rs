@@ -9,6 +9,9 @@ use std::path::Path;
 
 use crate::color::Color;
 use crate::hittable::HittableList;
+use crate::materials::dielectric::DielectricMat;
+use crate::materials::Materials::Dielectric;
+use crate::materials::{Materials, Scatterable};
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};
 use crate::utilities::{random_float, INFINITY};
@@ -48,7 +51,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
         return Color::black();
     }
 
-    if let Some(hit) = world.hit(ray, 0.001, INFINITY) {
+    if let Some(hit_record) = world.hit(ray, 0.001, INFINITY) {
         // diffuse render 1: let target = hit.p + hit.normal + Point3::random_in_unit_sphere();
         // diffuse render 2: let target = hit.p + hit.normal + Point3::random_unit_vector();
         // diffuse render 3:  let target = hit.p + Point3::random_in_hemisphere(&hit.normal);
@@ -56,9 +59,10 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
 
         let mut scattered = Ray::new(Point3::default(), Vec3::default());
         let mut attenuation = Color::black();
-        if hit
+
+        if hit_record
             .material
-            .scatter(ray, &hit, &mut attenuation, &mut scattered)
+            .scatter(ray, &hit_record, &mut attenuation, &mut scattered)
         {
             return attenuation * ray_color(&scattered, world, depth - 1);
         }

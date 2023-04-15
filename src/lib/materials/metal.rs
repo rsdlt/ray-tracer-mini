@@ -4,26 +4,26 @@
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
-use crate::materials::Material;
+use crate::materials::{Materials, Scatterable};
 use crate::ray::Ray;
 use crate::vector::Vec3;
 
 /// The Metal material type with the albedo and fuzz properties.
 #[derive(Copy, Clone, Debug)]
-pub struct Metal {
+pub struct MetalMat {
     /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
     /// Proportion of 'fuzziness' of a reflection.
     pub fuzz: f64,
 }
-impl Metal {
+impl MetalMat {
     /// Function creates and returns an owned Metal material.
     pub fn new(albedo: Color, fuzz: f64) -> Self {
         Self { albedo, fuzz }
     }
 }
 
-impl Material for Metal {
+impl Scatterable for MetalMat {
     fn scatter(
         &self,
         r_in: &Ray,
@@ -36,9 +36,5 @@ impl Material for Metal {
         *attenuation = self.albedo;
 
         Vec3::dot(scattered.direction(), rec.normal) > 0.0
-    }
-
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
     }
 }

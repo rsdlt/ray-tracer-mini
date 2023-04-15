@@ -5,25 +5,25 @@
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
-use crate::materials::Material;
+use crate::materials::{Materials, Scatterable};
 use crate::ray::Ray;
 
 use crate::vector::Vec3;
 
 /// The Lambertian type with the albedo property.
 #[derive(Copy, Clone, Debug)]
-pub struct Lambertian {
+pub struct LambertianMat {
     /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
 }
-impl Lambertian {
+impl LambertianMat {
     /// Function creates and returns an owned Lambertian material.
     pub fn new(albedo: Color) -> Self {
         Self { albedo }
     }
 }
 
-impl Material for Lambertian {
+impl Scatterable for LambertianMat {
     fn scatter(
         &self,
         r_in: &Ray,
@@ -41,9 +41,5 @@ impl Material for Lambertian {
         *scattered = Ray::new(rec.p, scatter_direction);
         *attenuation = self.albedo;
         true
-    }
-
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
     }
 }

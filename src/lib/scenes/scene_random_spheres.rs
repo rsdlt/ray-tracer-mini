@@ -6,7 +6,9 @@ use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::image::Image;
-use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
+use crate::materials::{
+    dielectric::DielectricMat, lambertian::LambertianMat, metal::MetalMat, Materials,
+};
 use crate::scenes::SceneConfig;
 use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, random_float_range, PI};
@@ -35,7 +37,7 @@ impl SceneConfig for RandomSpheres {
 
     fn new_world() -> Self::World {
         // Create the ground
-        let material_ground = Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+        let material_ground = Materials::Lambertian(LambertianMat::new(Color::new(0.5, 0.5, 0.5)));
         let shape_ground = Box::new(Sphere::new(
             Point3::new(0.0, -1_000.0, 0.0),
             1_000.0,
@@ -59,7 +61,7 @@ impl SceneConfig for RandomSpheres {
                     if choose_mat < 0.8 {
                         // diffuse
                         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
-                        let sphere_material = Box::new(Lambertian::new(albedo));
+                        let sphere_material = Materials::Lambertian(LambertianMat::new(albedo));
                         let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
@@ -67,13 +69,13 @@ impl SceneConfig for RandomSpheres {
                         // metal
                         let albedo = Color::random(0.5, 1.0);
                         let fuzz = random_float_range(0.0, 0.5);
-                        let sphere_material = Box::new(Metal::new(albedo, fuzz));
+                        let sphere_material = Materials::Metal(MetalMat::new(albedo, fuzz));
                         let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     } else {
                         // glass
-                        let sphere_material = Box::new(Dielectric::new(1.5));
+                        let sphere_material = Materials::Dielectric(DielectricMat::new(1.5));
                         let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
@@ -81,21 +83,21 @@ impl SceneConfig for RandomSpheres {
                 }
             }
         }
-        let material_1 = Box::new(Dielectric::new(1.5));
+        let material_1 = Materials::Dielectric(DielectricMat::new(1.5));
         world.add(Box::new(Sphere::new(
             Point3::new(0.0, 1.0, 0.0),
             1.0,
             material_1,
         )));
 
-        let material_2 = Box::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+        let material_2 = Materials::Lambertian(LambertianMat::new(Color::new(0.4, 0.2, 0.1)));
         world.add(Box::new(Sphere::new(
             Point3::new(-4.0, 1.0, 0.0),
             1.0,
             material_2,
         )));
 
-        let material_3 = Box::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+        let material_3 = Materials::Metal(MetalMat::new(Color::new(0.7, 0.6, 0.5), 0.0));
         world.add(Box::new(Sphere::new(
             Point3::new(4.0, 1.0, 0.0),
             1.0,

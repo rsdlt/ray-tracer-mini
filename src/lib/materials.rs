@@ -8,10 +8,18 @@ pub mod metal;
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
+use crate::materials::{dielectric::DielectricMat, lambertian::LambertianMat, metal::MetalMat};
 use crate::ray::Ray;
 
+#[derive(Debug, Clone, Copy)]
+pub enum Materials {
+    Metal(MetalMat),
+    Dielectric(DielectricMat),
+    Lambertian(LambertianMat),
+}
+
 /// The Material trait.
-pub trait Material {
+pub trait Scatterable {
     /// Function that returns true if the material produces a scattered Ray. If scattered then, it
     /// indicates how much attenuation via mutation.
     fn scatter(
@@ -21,13 +29,20 @@ pub trait Material {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool;
-
-    /// Helper function to the implementation of the Clone trait for the Material trait objects..
-    fn clone_box(&self) -> Box<dyn Material>;
 }
 
-impl Clone for Box<dyn Material> {
-    fn clone(&self) -> Box<dyn Material> {
-        self.clone_box()
+impl Scatterable for Materials {
+    fn scatter(
+        &self,
+        r_in: &Ray,
+        rec: &HitRecord,
+        attenuation: &mut Color,
+        scattered: &mut Ray,
+    ) -> bool {
+        match self {
+            Materials::Lambertian(lamb) => lamb.scatter(r_in, rec, attenuation, scattered),
+            Materials::Metal(metal) => metal.scatter(r_in, rec, attenuation, scattered),
+            Materials::Dielectric(die) => die.scatter(r_in, rec, attenuation, scattered),
+        }
     }
 }

@@ -4,7 +4,7 @@
 #![allow(missing_debug_implementations)]
 
 use crate::hittable::{HitRecord, Hittable};
-use crate::materials::Material;
+use crate::materials::Materials;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
@@ -15,12 +15,12 @@ pub struct Sphere {
     /// Radius of the Sphere.
     radius: f64,
     /// Material for the Sphere represented as a Trait object.
-    material: Box<dyn Material>,
+    material: Materials,
 }
 
 impl Sphere {
     /// Function returns an owned Sphere.
-    pub fn new(center: Point3, radius: f64, material: Box<dyn Material>) -> Self {
+    pub fn new(center: Point3, radius: f64, material: Materials) -> Self {
         Self {
             center,
             radius,
@@ -57,7 +57,7 @@ impl Hittable for Sphere {
         hit_record.p = ray.at(hit_record.t);
         let outward_normal = (hit_record.p - self.center) / self.radius;
         hit_record.set_face_normal(ray, outward_normal);
-        hit_record.material = self.material.clone();
+        hit_record.material = self.material;
 
         Some(hit_record)
     }

@@ -5,18 +5,18 @@
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
-use crate::materials::Material;
+use crate::materials::{Materials, Scatterable};
 use crate::ray::Ray;
 use crate::utilities::random_float;
 use crate::vector::Vec3;
 
 /// The Dielectric Material type with the Index of Refraction property.
 #[derive(Copy, Clone, Debug)]
-pub struct Dielectric {
+pub struct DielectricMat {
     /// Index of refraction
     pub ir: f64,
 }
-impl Dielectric {
+impl DielectricMat {
     /// Function that creates and returns an owned Dielectric Material.
     pub fn new(ir: f64) -> Self {
         Self { ir }
@@ -29,7 +29,7 @@ impl Dielectric {
     }
 }
 
-impl Material for Dielectric {
+impl Scatterable for DielectricMat {
     fn scatter(
         &self,
         r_in: &Ray,
@@ -50,7 +50,7 @@ impl Material for Dielectric {
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let mut direction = Vec3::default();
 
-        if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > random_float() {
+        if cannot_refract || DielectricMat::reflectance(cos_theta, refraction_ratio) > random_float() {
             direction = Vec3::reflect(unit_direction, rec.normal);
         } else {
             direction = Vec3::refract(unit_direction, rec.normal, refraction_ratio);
@@ -58,9 +58,5 @@ impl Material for Dielectric {
 
         *scattered = Ray::new(rec.p, direction);
         true
-    }
-
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
     }
 }

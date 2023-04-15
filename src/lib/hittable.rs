@@ -5,8 +5,8 @@
 #![allow(missing_debug_implementations)]
 
 use crate::color::Color;
-use crate::materials::lambertian::Lambertian;
-use crate::materials::Material;
+use crate::materials::lambertian::LambertianMat;
+use crate::materials::Materials;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
 
@@ -17,7 +17,7 @@ pub struct HitRecord {
     /// Normal vector where a Ray hits a shape.
     pub normal: Vec3,
     /// Material that is applied to a shape where the Ray hits.
-    pub material: Box<dyn Material>,
+    pub material: Materials,
     /// "t" parameter of a Ray where it hit a shape.
     pub t: f64,
     /// Used to determine if the Ray was inside (false) or outside (true) a shape when it hit.
@@ -35,13 +35,7 @@ impl HitRecord {
     }
 
     /// Function creates and returns an owned HitRecord.
-    pub fn new(
-        p: Point3,
-        normal: Vec3,
-        material: Box<dyn Material>,
-        t: f64,
-        front_face: bool,
-    ) -> Self {
+    pub fn new(p: Point3, normal: Vec3, material: Materials, t: f64, front_face: bool) -> Self {
         Self {
             p,
             normal,
@@ -53,10 +47,11 @@ impl HitRecord {
 }
 impl Default for HitRecord {
     fn default() -> Self {
+        let mat = LambertianMat::new(Color::black());
         Self {
             p: Point3::default(),
             normal: Vec3::default(),
-            material: Box::new(Lambertian::new(Color::black())),
+            material: Materials::Lambertian(mat),
             t: 0.0,
             front_face: false,
         }
@@ -87,7 +82,7 @@ impl HittableList {
         self.shapes.push(object);
     }
 
-    /// Creates an returns an empty collection of shapes.
+    /// Creates and returns an empty collection of shapes.
     pub fn new(object: Box<dyn Hittable>) -> Self {
         Self {
             shapes: vec![object],
