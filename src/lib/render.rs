@@ -28,7 +28,7 @@ pub fn render() -> Result<File, std::io::Error> {
     for j in (0..scene.image.height).rev() {
         println!("Scanlines remaining: {}", j);
         for i in 0..scene.image.width {
-            // Parallel Iteration with Rayon
+            // Parallel Iteration to calculate Samples per Pixel.
             let mut pixel_color = Color::black();
             let pixel_color_col = vec![pixel_color; scene.image.samples_per_pixel];
             pixel_color = pixel_color_col
