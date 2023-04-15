@@ -4,6 +4,8 @@
 #![warn(missing_docs)]
 #![allow(missing_debug_implementations)]
 
+use rayon::prelude::*;
+
 use crate::color::Color;
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
