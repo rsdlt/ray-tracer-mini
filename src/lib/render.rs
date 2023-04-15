@@ -28,11 +28,9 @@ pub fn render() -> Result<File, std::io::Error> {
     for j in (0..scene.image.height).rev() {
         println!("Scanlines remaining: {}", j);
         for i in 0..scene.image.width {
-            let mut pixel_color = Color::black();
-
-            let mut pixel_color_col = vec![pixel_color; scene.image.samples_per_pixel];
-
             // Parallel Iteration with Rayon
+            let mut pixel_color = Color::black();
+            let mut pixel_color_col = vec![pixel_color; scene.image.samples_per_pixel];
             pixel_color = pixel_color_col
                 .par_iter()
                 .map(|color| {
@@ -42,13 +40,6 @@ pub fn render() -> Result<File, std::io::Error> {
                     *color + ray_color(&ray, &scene.world, scene.image.max_depth)
                 })
                 .sum::<Color>();
-
-            // for _s in 0..scene.image.samples_per_pixel {
-            //     let u = (i as f64 + random_float()) / (scene.image.width as f64 - 1.0);
-            //     let v = (j as f64 + random_float()) / (scene.image.height as f64 - 1.0);
-            //     let ray = scene.camera.get_ray(u, v);
-            //     pixel_color = pixel_color + ray_color(&ray, &scene.world, scene.image.max_depth);
-            // }
 
             Color::write_color_ppm(&mut line, &pixel_color, scene.image.samples_per_pixel);
         }
