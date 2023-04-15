@@ -35,27 +35,6 @@ impl std::iter::Sum for Color {
 }
 
 impl Color {
-    /// Function that writes an RGB color in the form of (0,90,255) to a String in the format required
-    /// by the PPM image format.
-    pub fn write_color_ppm(line: &mut String, color: &Color, samples_per_pixel: usize) {
-        // Divide color by # of samples and gamma-correct for gamma 2.0
-        let scale = 1.0 / (samples_per_pixel as f64);
-        let (r, g, b) = (
-            ((color.r * scale).sqrt()).clamp(0.0, 0.999),
-            ((color.g * scale).sqrt()).clamp(0.0, 0.999),
-            ((color.b * scale).sqrt()).clamp(0.0, 0.999),
-        );
-        line.push_str(
-            format!(
-                "{} {} {}\n",
-                (256.0 * r) as usize,
-                (256.0 * g) as usize,
-                (256.0 * b) as usize,
-            )
-            .as_str(),
-        );
-    }
-
     /// Function returns a random RGB color clamped to the min and max boundaries.
     pub fn random(min: f64, max: f64) -> Self {
         Self {
