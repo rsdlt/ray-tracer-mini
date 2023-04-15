@@ -8,7 +8,6 @@ use crate::color::Color;
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
 use crate::ray::Ray;
-use crate::shapes::sphere::Sphere;
 use crate::shapes::Shapes;
 use crate::vector::{Point3, Vec3};
 

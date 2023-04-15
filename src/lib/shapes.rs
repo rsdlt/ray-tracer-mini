@@ -9,8 +9,10 @@ use crate::shapes::sphere::Sphere;
 /// Module that contains the functionality of the Sphere shape.
 pub mod sphere;
 
+/// Shape types that can be rendered.
 #[derive(Debug, Clone, Copy)]
 pub enum Shapes {
+    /// Shapes of type Spheroids.
     Spheroids(Sphere),
 }
 

@@ -11,10 +11,14 @@ use crate::hittable::HitRecord;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
 
+/// Materials that can be applied to a Shape.
 #[derive(Debug, Clone, Copy)]
 pub enum Materials {
+    /// Metal materials.
     Metals(Metal),
+    /// Dielectric materials.
     Dielectrics(Dielectric),
+    /// Lambertian materials.
     Lambertians(Lambertian),
 }
 

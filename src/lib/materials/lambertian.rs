@@ -5,7 +5,7 @@
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
-use crate::materials::{Materials, Scatterable};
+use crate::materials::Scatterable;
 use crate::ray::Ray;
 
 use crate::vector::Vec3;

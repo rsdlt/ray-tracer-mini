@@ -36,7 +36,6 @@ impl Default for Sphere {
         let center = Point3::default();
         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
         let sphere_material = Materials::Lambertians(Lambertian::new(albedo));
-        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
         Self {
             center,
             radius: 1.0,
