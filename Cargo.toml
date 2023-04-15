@@ -11,4 +11,6 @@ path = "src/lib/mod.rs"
 
 [dependencies]
 derive_more = "0.99.17"
+parking_lot = "0.12.1"
 rand = "0.8.5"
+rayon = "1.7.0"

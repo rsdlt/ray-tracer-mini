@@ -7,6 +7,8 @@ use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::materials::Material;
 use crate::ray::Ray;
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 use crate::vector::Vec3;
 
@@ -43,7 +45,7 @@ impl Material for Lambertian {
         true
     }
 
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
+    fn clone_box(&self) -> Arc<Mutex<Box<dyn Material + Send>>> {
+        Arc::new(Mutex::new(Box::new(*self)))
     }
 }

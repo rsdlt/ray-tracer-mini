@@ -7,6 +7,8 @@ use crate::hittable::HitRecord;
 use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::Vec3;
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 /// The Metal material type with the albedo and fuzz properties.
 #[derive(Copy, Clone, Debug)]
@@ -38,7 +40,7 @@ impl Material for Metal {
         Vec3::dot(scattered.direction(), rec.normal) > 0.0
     }
 
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
+    fn clone_box(&self) -> Arc<Mutex<Box<dyn Material + Send>>> {
+        Arc::new(Mutex::new(Box::new(*self)))
     }
 }

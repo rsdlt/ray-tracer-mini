@@ -9,6 +9,9 @@ pub mod metal;
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::ray::Ray;
+use crate::utilities::SharedMaterial;
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 /// The Material trait.
 pub trait Material {
@@ -23,11 +26,11 @@ pub trait Material {
     ) -> bool;
 
     /// Helper function to the implementation of the Clone trait for the Material trait objects..
-    fn clone_box(&self) -> Box<dyn Material>;
+    fn clone_box(&self) -> Arc<Mutex<Box<dyn Material + Send>>>;
 }
 
-impl Clone for Box<dyn Material> {
-    fn clone(&self) -> Box<dyn Material> {
-        self.clone_box()
-    }
-}
+// impl Clone for Arc<Mutex<Box<dyn Material>>> {
+//     fn clone(&self) -> Arc<Mutex<Box<dyn Material>>> {
+//         Arc::new(Mutex::new(self.clone_box()))
+//     }
+// }

@@ -11,6 +11,8 @@ use crate::scenes::SceneConfig;
 use crate::shapes::sphere::Sphere;
 use crate::utilities::{random_float, random_float_range, PI};
 use crate::vector::{Point3, Vec3};
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 /// Type that collects a scene full of random spheres with three different materials.
 pub struct RandomSpheres {
@@ -30,7 +32,7 @@ impl SceneConfig for RandomSpheres {
 
     fn new_image() -> Self::Image {
         // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
-        Image::new(256, 256, 50, 10)
+        Image::new(256, 256, 20, 10)
     }
 
     fn new_world() -> Self::World {
@@ -39,11 +41,11 @@ impl SceneConfig for RandomSpheres {
         let shape_ground = Box::new(Sphere::new(
             Point3::new(0.0, -1_000.0, 0.0),
             1_000.0,
-            material_ground,
+            Arc::new(Mutex::new(material_ground)),
         ));
 
         // Create the world scene
-        let mut world = HittableList::new(shape_ground);
+        let mut world = HittableList::new(Arc::new(Mutex::new(shape_ground)));
 
         // Create the scene
         for a in -11..11 {
@@ -60,47 +62,59 @@ impl SceneConfig for RandomSpheres {
                         // diffuse
                         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
                         let sphere_material = Box::new(Lambertian::new(albedo));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere = Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Mutex::new(sphere_material)),
+                        ));
 
-                        world.add(sphere);
+                        world.add(Arc::new(Mutex::new(sphere)));
                     } else if choose_mat < 0.95 {
                         // metal
                         let albedo = Color::random(0.5, 1.0);
                         let fuzz = random_float_range(0.0, 0.5);
                         let sphere_material = Box::new(Metal::new(albedo, fuzz));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere = Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Mutex::new(sphere_material)),
+                        ));
 
-                        world.add(sphere);
+                        world.add(Arc::new(Mutex::new(sphere)));
                     } else {
                         // glass
                         let sphere_material = Box::new(Dielectric::new(1.5));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere = Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Mutex::new(sphere_material)),
+                        ));
 
-                        world.add(sphere);
+                        world.add(Arc::new(Mutex::new(sphere)));
                     }
                 }
             }
         }
         let material_1 = Box::new(Dielectric::new(1.5));
-        world.add(Box::new(Sphere::new(
+        world.add(Arc::new(Mutex::new(Box::new(Sphere::new(
             Point3::new(0.0, 1.0, 0.0),
             1.0,
-            material_1,
-        )));
+            Arc::new(Mutex::new(material_1)),
+        )))));
 
         let material_2 = Box::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-        world.add(Box::new(Sphere::new(
+        world.add(Arc::new(Mutex::new(Box::new(Sphere::new(
             Point3::new(-4.0, 1.0, 0.0),
             1.0,
-            material_2,
-        )));
+            Arc::new(Mutex::new(material_2)),
+        )))));
 
         let material_3 = Box::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-        world.add(Box::new(Sphere::new(
+        world.add(Arc::new(Mutex::new(Box::new(Sphere::new(
             Point3::new(4.0, 1.0, 0.0),
             1.0,
-            material_3,
-        )));
+            Arc::new(Mutex::new(material_3)),
+        )))));
 
         world
     }

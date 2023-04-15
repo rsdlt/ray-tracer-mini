@@ -14,6 +14,8 @@ use crate::scenes::{scene_random_spheres, SceneConfig};
 use crate::utilities::{random_float, INFINITY};
 use crate::vector::{Point3, Vec3};
 
+use rayon::prelude::*;
+
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
     let scene = scene_random_spheres::RandomSpheres::generate_scene();
@@ -28,12 +30,26 @@ pub fn render() -> Result<File, std::io::Error> {
         for i in 0..scene.image.width {
             let mut pixel_color = Color::black();
 
-            for _s in 0..scene.image.samples_per_pixel {
-                let u = (i as f64 + random_float()) / (scene.image.width as f64 - 1.0);
-                let v = (j as f64 + random_float()) / (scene.image.height as f64 - 1.0);
-                let ray = scene.camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(&ray, &scene.world, scene.image.max_depth);
-            }
+            let mut pixel_color_col = vec![pixel_color; scene.image.samples_per_pixel];
+
+            // Parallel Iteration with Rayon
+            pixel_color = pixel_color_col
+                .par_iter()
+                .map(|color| {
+                    let u = (i as f64 + random_float()) / (scene.image.width as f64 - 1.0);
+                    let v = (j as f64 + random_float()) / (scene.image.height as f64 - 1.0);
+                    let ray = scene.camera.get_ray(u, v);
+                    *color + ray_color(&ray, &scene.world, scene.image.max_depth)
+                })
+                .sum::<Color>();
+
+            // for _s in 0..scene.image.samples_per_pixel {
+            //     let u = (i as f64 + random_float()) / (scene.image.width as f64 - 1.0);
+            //     let v = (j as f64 + random_float()) / (scene.image.height as f64 - 1.0);
+            //     let ray = scene.camera.get_ray(u, v);
+            //     pixel_color = pixel_color + ray_color(&ray, &scene.world, scene.image.max_depth);
+            // }
+
             Color::write_color_ppm(&mut line, &pixel_color, scene.image.samples_per_pixel);
         }
     }
@@ -58,6 +74,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
         let mut attenuation = Color::black();
         if hit
             .material
+            .lock()
             .scatter(ray, &hit, &mut attenuation, &mut scattered)
         {
             return attenuation * ray_color(&scattered, world, depth - 1);

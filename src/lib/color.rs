@@ -20,6 +20,21 @@ pub struct Color {
     pub b: f64,
 }
 
+// implement the iterator Sum for Color so to iter().sum::<Color>()
+impl std::iter::Sum for Color {
+    fn sum<I: Iterator<Item = Color>>(iter: I) -> Color {
+        let mut r = 0.0;
+        let mut g = 0.0;
+        let mut b = 0.0;
+        for c in iter {
+            r += c.r;
+            g += c.g;
+            b += c.b;
+        }
+        Color { r, g, b }
+    }
+}
+
 impl Color {
     /// Function that writes an RGB color in the form of (0,90,255) to a String in the format required
     /// by the PPM image format.

@@ -9,6 +9,8 @@ use crate::materials::lambertian::Lambertian;
 use crate::materials::Material;
 use crate::ray::Ray;
 use crate::vector::{Point3, Vec3};
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 /// The HitRecord type is used to record a ray intersection with a Shape that contains an specific Material.
 pub struct HitRecord {
@@ -17,12 +19,14 @@ pub struct HitRecord {
     /// Normal vector where a Ray hits a shape.
     pub normal: Vec3,
     /// Material that is applied to a shape where the Ray hits.
-    pub material: Box<dyn Material>,
+    pub material: Arc<Mutex<Box<dyn Material + Send>>>,
     /// "t" parameter of a Ray where it hit a shape.
     pub t: f64,
     /// Used to determine if the Ray was inside (false) or outside (true) a shape when it hit.
     pub front_face: bool,
 }
+
+//std::marker::Sync` is not implemented for `(dyn hittable::Hittable + 'static)
 
 impl HitRecord {
     /// Function that sets the front_face normal when a Ray hits a surface.
@@ -38,7 +42,7 @@ impl HitRecord {
     pub fn new(
         p: Point3,
         normal: Vec3,
-        material: Box<dyn Material>,
+        material: Arc<Mutex<Box<dyn Material + Send>>>,
         t: f64,
         front_face: bool,
     ) -> Self {
@@ -56,7 +60,7 @@ impl Default for HitRecord {
         Self {
             p: Point3::default(),
             normal: Vec3::default(),
-            material: Box::new(Lambertian::new(Color::black())),
+            material: Arc::new(Mutex::new(Box::new(Lambertian::new(Color::black())))),
             t: 0.0,
             front_face: false,
         }
@@ -73,7 +77,7 @@ pub trait Hittable {
 /// An instance is commonly defined as "World".
 pub struct HittableList {
     /// Collection of shapes that define a Scene to be rendered.
-    pub shapes: Vec<Box<dyn Hittable>>,
+    pub shapes: Vec<Arc<Mutex<Box<dyn Hittable + Send>>>>,
 }
 
 impl HittableList {
@@ -83,12 +87,12 @@ impl HittableList {
     }
 
     /// Adds a new shape to the collection.
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<Mutex<Box<dyn Hittable + Send>>>) {
         self.shapes.push(object);
     }
 
     /// Creates an returns an empty collection of shapes.
-    pub fn new(object: Box<dyn Hittable>) -> Self {
+    pub fn new(object: Arc<Mutex<Box<dyn Hittable + Send>>>) -> Self {
         Self {
             shapes: vec![object],
         }
@@ -100,7 +104,7 @@ impl HittableList {
         let mut closest_so_far = t_max;
 
         for object in self.shapes.iter() {
-            if let Some(hit) = object.hit(&ray, t_min, closest_so_far) {
+            if let Some(hit) = object.lock().hit(&ray, t_min, closest_so_far) {
                 closest_so_far = hit.t;
                 hit_something = Some(hit)
             }

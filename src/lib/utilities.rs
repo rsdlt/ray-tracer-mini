@@ -3,7 +3,10 @@
 
 #![warn(missing_docs, missing_debug_implementations)]
 
+use crate::materials::Material;
+use parking_lot::Mutex;
 use rand::prelude::*;
+use std::sync::Arc;
 
 /// Pi constant in f64 type.
 pub const PI: f64 = std::f64::consts::PI;
@@ -14,6 +17,7 @@ pub const EPSILON: f64 = 0.001;
 /// Near_zero is utilized in limiting rendering computations when values approach zero.
 pub const NEAR_ZERO: f64 = 1e-8;
 
+pub type SharedMaterial = Arc<Mutex<Box<dyn Material + Send>>>;
 
 /// Function to convert from degrees to radians.
 pub fn degrees_to_radians(degrees: f64) -> f64 {

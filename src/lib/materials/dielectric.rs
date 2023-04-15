@@ -9,6 +9,8 @@ use crate::materials::Material;
 use crate::ray::Ray;
 use crate::utilities::random_float;
 use crate::vector::Vec3;
+use parking_lot::Mutex;
+use std::sync::Arc;
 
 /// The Dielectric Material type with the Index of Refraction property.
 #[derive(Copy, Clone, Debug)]
@@ -60,7 +62,7 @@ impl Material for Dielectric {
         true
     }
 
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(*self)
+    fn clone_box(&self) -> Arc<Mutex<Box<dyn Material + Send>>> {
+        Arc::new(Mutex::new(Box::new(*self)))
     }
 }
