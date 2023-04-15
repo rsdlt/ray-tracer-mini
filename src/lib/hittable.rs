@@ -5,9 +5,11 @@
 #![allow(missing_debug_implementations)]
 
 use crate::color::Color;
-use crate::materials::lambertian::LambertianMat;
+use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
 use crate::ray::Ray;
+use crate::shapes::sphere::Sphere;
+use crate::shapes::Shapes;
 use crate::vector::{Point3, Vec3};
 
 /// The HitRecord type is used to record a ray intersection with a Shape that contains an specific Material.
@@ -47,11 +49,11 @@ impl HitRecord {
 }
 impl Default for HitRecord {
     fn default() -> Self {
-        let mat = LambertianMat::new(Color::black());
+        let mat = Lambertian::new(Color::black());
         Self {
             p: Point3::default(),
             normal: Vec3::default(),
-            material: Materials::Lambertian(mat),
+            material: Materials::Lambertians(mat),
             t: 0.0,
             front_face: false,
         }
@@ -68,7 +70,7 @@ pub trait Hittable {
 /// An instance is commonly defined as "World".
 pub struct HittableList {
     /// Collection of shapes that define a Scene to be rendered.
-    pub shapes: Vec<Box<dyn Hittable>>,
+    pub shapes: Vec<Shapes>,
 }
 
 impl HittableList {
@@ -78,15 +80,13 @@ impl HittableList {
     }
 
     /// Adds a new shape to the collection.
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
-        self.shapes.push(object);
+    pub fn add(&mut self, shape: Shapes) {
+        self.shapes.push(shape);
     }
 
     /// Creates and returns an empty collection of shapes.
-    pub fn new(object: Box<dyn Hittable>) -> Self {
-        Self {
-            shapes: vec![object],
-        }
+    pub fn new() -> Self {
+        Self { shapes: vec![] }
     }
 
     /// Function that takes in a Ray, and "counts" a hit if "t" is between t_man and t_max boundaries.
@@ -94,8 +94,8 @@ impl HittableList {
         let mut hit_something: Option<HitRecord> = None;
         let mut closest_so_far = t_max;
 
-        for object in self.shapes.iter() {
-            if let Some(hit) = object.hit(&ray, t_min, closest_so_far) {
+        for shape in self.shapes.iter() {
+            if let Some(hit) = shape.hit(&ray, t_min, closest_so_far) {
                 closest_so_far = hit.t;
                 hit_something = Some(hit)
             }

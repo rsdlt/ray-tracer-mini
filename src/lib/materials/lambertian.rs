@@ -12,18 +12,18 @@ use crate::vector::Vec3;
 
 /// The Lambertian type with the albedo property.
 #[derive(Copy, Clone, Debug)]
-pub struct LambertianMat {
+pub struct Lambertian {
     /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
 }
-impl LambertianMat {
+impl Lambertian {
     /// Function creates and returns an owned Lambertian material.
     pub fn new(albedo: Color) -> Self {
         Self { albedo }
     }
 }
 
-impl Scatterable for LambertianMat {
+impl Scatterable for Lambertian {
     fn scatter(
         &self,
         r_in: &Ray,

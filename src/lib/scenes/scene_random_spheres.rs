@@ -6,11 +6,10 @@ use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::image::Image;
-use crate::materials::{
-    dielectric::DielectricMat, lambertian::LambertianMat, metal::MetalMat, Materials,
-};
+use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal, Materials};
 use crate::scenes::SceneConfig;
 use crate::shapes::sphere::Sphere;
+use crate::shapes::Shapes;
 use crate::utilities::{random_float, random_float_range, PI};
 use crate::vector::{Point3, Vec3};
 
@@ -37,15 +36,16 @@ impl SceneConfig for RandomSpheres {
 
     fn new_world() -> Self::World {
         // Create the ground
-        let material_ground = Materials::Lambertian(LambertianMat::new(Color::new(0.5, 0.5, 0.5)));
-        let shape_ground = Box::new(Sphere::new(
+        let material_ground = Materials::Lambertians(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+        let sphere_ground = Shapes::Spheroids(Sphere::new(
             Point3::new(0.0, -1_000.0, 0.0),
             1_000.0,
             material_ground,
         ));
 
         // Create the world scene
-        let mut world = HittableList::new(shape_ground);
+        let mut world = HittableList::new();
+        world.add(sphere_ground);
 
         // Create the scene
         for a in -11..11 {
@@ -61,44 +61,44 @@ impl SceneConfig for RandomSpheres {
                     if choose_mat < 0.8 {
                         // diffuse
                         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
-                        let sphere_material = Materials::Lambertian(LambertianMat::new(albedo));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere_material = Materials::Lambertians(Lambertian::new(albedo));
+                        let sphere = Shapes::Spheroids(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     } else if choose_mat < 0.95 {
                         // metal
                         let albedo = Color::random(0.5, 1.0);
                         let fuzz = random_float_range(0.0, 0.5);
-                        let sphere_material = Materials::Metal(MetalMat::new(albedo, fuzz));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere_material = Materials::Metals(Metal::new(albedo, fuzz));
+                        let sphere = Shapes::Spheroids(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     } else {
                         // glass
-                        let sphere_material = Materials::Dielectric(DielectricMat::new(1.5));
-                        let sphere = Box::new(Sphere::new(center, 0.2, sphere_material));
+                        let sphere_material = Materials::Dielectrics(Dielectric::new(1.5));
+                        let sphere = Shapes::Spheroids(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     }
                 }
             }
         }
-        let material_1 = Materials::Dielectric(DielectricMat::new(1.5));
-        world.add(Box::new(Sphere::new(
+        let material_1 = Materials::Dielectrics(Dielectric::new(1.5));
+        world.add(Shapes::Spheroids(Sphere::new(
             Point3::new(0.0, 1.0, 0.0),
             1.0,
             material_1,
         )));
 
-        let material_2 = Materials::Lambertian(LambertianMat::new(Color::new(0.4, 0.2, 0.1)));
-        world.add(Box::new(Sphere::new(
+        let material_2 = Materials::Lambertians(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+        world.add(Shapes::Spheroids(Sphere::new(
             Point3::new(-4.0, 1.0, 0.0),
             1.0,
             material_2,
         )));
 
-        let material_3 = Materials::Metal(MetalMat::new(Color::new(0.7, 0.6, 0.5), 0.0));
-        world.add(Box::new(Sphere::new(
+        let material_3 = Materials::Metals(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+        world.add(Shapes::Spheroids(Sphere::new(
             Point3::new(4.0, 1.0, 0.0),
             1.0,
             material_3,

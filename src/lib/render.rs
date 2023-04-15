@@ -9,8 +9,8 @@ use std::path::Path;
 
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::materials::dielectric::DielectricMat;
-use crate::materials::Materials::Dielectric;
+use crate::materials::dielectric::Dielectric;
+use crate::materials::Materials::Dielectrics;
 use crate::materials::{Materials, Scatterable};
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};

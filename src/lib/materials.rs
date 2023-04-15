@@ -8,14 +8,14 @@ pub mod metal;
 
 use crate::color::Color;
 use crate::hittable::HitRecord;
-use crate::materials::{dielectric::DielectricMat, lambertian::LambertianMat, metal::MetalMat};
+use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use crate::ray::Ray;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Materials {
-    Metal(MetalMat),
-    Dielectric(DielectricMat),
-    Lambertian(LambertianMat),
+    Metals(Metal),
+    Dielectrics(Dielectric),
+    Lambertians(Lambertian),
 }
 
 /// The Material trait.
@@ -40,9 +40,9 @@ impl Scatterable for Materials {
         scattered: &mut Ray,
     ) -> bool {
         match self {
-            Materials::Lambertian(lamb) => lamb.scatter(r_in, rec, attenuation, scattered),
-            Materials::Metal(metal) => metal.scatter(r_in, rec, attenuation, scattered),
-            Materials::Dielectric(die) => die.scatter(r_in, rec, attenuation, scattered),
+            Materials::Lambertians(lamb) => lamb.scatter(r_in, rec, attenuation, scattered),
+            Materials::Metals(metal) => metal.scatter(r_in, rec, attenuation, scattered),
+            Materials::Dielectrics(die) => die.scatter(r_in, rec, attenuation, scattered),
         }
     }
 }

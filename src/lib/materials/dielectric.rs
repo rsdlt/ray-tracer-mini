@@ -12,11 +12,11 @@ use crate::vector::Vec3;
 
 /// The Dielectric Material type with the Index of Refraction property.
 #[derive(Copy, Clone, Debug)]
-pub struct DielectricMat {
+pub struct Dielectric {
     /// Index of refraction
     pub ir: f64,
 }
-impl DielectricMat {
+impl Dielectric {
     /// Function that creates and returns an owned Dielectric Material.
     pub fn new(ir: f64) -> Self {
         Self { ir }
@@ -29,7 +29,7 @@ impl DielectricMat {
     }
 }
 
-impl Scatterable for DielectricMat {
+impl Scatterable for Dielectric {
     fn scatter(
         &self,
         r_in: &Ray,
@@ -50,7 +50,7 @@ impl Scatterable for DielectricMat {
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let mut direction = Vec3::default();
 
-        if cannot_refract || DielectricMat::reflectance(cos_theta, refraction_ratio) > random_float() {
+        if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > random_float() {
             direction = Vec3::reflect(unit_direction, rec.normal);
         } else {
             direction = Vec3::refract(unit_direction, rec.normal, refraction_ratio);

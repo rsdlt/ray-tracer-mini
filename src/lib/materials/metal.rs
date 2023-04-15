@@ -10,20 +10,20 @@ use crate::vector::Vec3;
 
 /// The Metal material type with the albedo and fuzz properties.
 #[derive(Copy, Clone, Debug)]
-pub struct MetalMat {
+pub struct Metal {
     /// Proportion of incident light that is reflected away from the surface.
     pub albedo: Color,
     /// Proportion of 'fuzziness' of a reflection.
     pub fuzz: f64,
 }
-impl MetalMat {
+impl Metal {
     /// Function creates and returns an owned Metal material.
     pub fn new(albedo: Color, fuzz: f64) -> Self {
         Self { albedo, fuzz }
     }
 }
 
-impl Scatterable for MetalMat {
+impl Scatterable for Metal {
     fn scatter(
         &self,
         r_in: &Ray,
