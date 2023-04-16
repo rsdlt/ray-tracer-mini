@@ -16,6 +16,10 @@ Motion Blur:
 
 ![Ray Trace Motion Blur](/img_history/image30.png)
 
+Progress bar indicator:
+
+![Progress Bar Indicator](/img_history/progressbar.png)
+
 ## Usage:
 
 1. Build project: `cargo build --release`.
