@@ -26,7 +26,7 @@ pub struct Camera {
     pub aspect_ratio: f64,
     /// Aperture of the Camera.
     pub aperture: f64,
-    /// Focus ditance.
+    /// Focus distance.
     pub focus_dist: f64,
 
     /// Shutter opening time.
