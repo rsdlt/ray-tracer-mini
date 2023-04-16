@@ -17,7 +17,7 @@ pub struct Sphere {
     center: Point3,
     /// Radius of the Sphere.
     radius: f64,
-    /// Material for the Sphere represented as a Trait object.
+    /// Material for the Sphere.
     material: Materials,
 }
 

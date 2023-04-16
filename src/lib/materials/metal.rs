@@ -32,7 +32,11 @@ impl Scatterable for Metal {
         scattered: &mut Ray,
     ) -> bool {
         let reflected = Vec3::reflect(Vec3::unit(r_in.direction()), rec.normal);
-        *scattered = Ray::new(rec.p, reflected + self.fuzz * Vec3::random_in_unit_sphere());
+        *scattered = Ray::new(
+            rec.p,
+            reflected + self.fuzz * Vec3::random_in_unit_sphere(),
+            r_in.time(),
+        );
         *attenuation = self.albedo;
 
         Vec3::dot(scattered.direction(), rec.normal) > 0.0

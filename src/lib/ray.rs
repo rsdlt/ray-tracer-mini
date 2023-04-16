@@ -4,11 +4,12 @@
 
 use crate::vector::{Point3, Vec3};
 
-/// The Ray type that contains a Point3 Origin and a Vec3 Direction.
+/// The Ray type that contains a Point3 Origin, Vec3 Direction and Time it exists.
 #[derive(Debug)]
 pub struct Ray {
     pub(crate) orig: Point3,
     pub(crate) dir: Vec3,
+    pub(crate) tm: f64,
 }
 
 impl Ray {
@@ -18,8 +19,8 @@ impl Ray {
     }
 
     /// Function that creates and return an owned Ray.
-    pub fn new(orig: Point3, dir: Vec3) -> Self {
-        Self { orig, dir }
+    pub fn new(orig: Point3, dir: Vec3, tm: f64) -> Self {
+        Self { orig, dir, tm }
     }
 
     /// Function that returns the direction component of a Ray.
@@ -30,5 +31,9 @@ impl Ray {
     /// Function that returns the origin component of a Ray.
     pub fn origin(&self) -> Point3 {
         self.orig
+    }
+    /// Function that returns the time component of a Ray.
+    pub fn time(&self) -> f64 {
+        self.tm
     }
 }

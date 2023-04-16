@@ -38,7 +38,7 @@ impl Scatterable for Lambertian {
             scatter_direction = rec.normal;
         }
 
-        *scattered = Ray::new(rec.p, scatter_direction);
+        *scattered = Ray::new(rec.p, scatter_direction, r_in.time());
         *attenuation = self.albedo;
         true
     }

@@ -1,11 +1,11 @@
 //! This module defines the Camera type including its associated functions, methods and constants.
 
 #![warn(missing_docs)]
-#![allow(dead_code, missing_debug_implementations)]
+#![allow(dead_code, missing_debug_implementations, clippy::too_many_arguments)]
 
 use crate::image::ASPECT_RATIO_DEFAULT;
 use crate::ray::Ray;
-use crate::utilities::degrees_to_radians;
+use crate::utilities::{degrees_to_radians, random_float_range};
 use crate::vector::{Point3, Vec3};
 
 const VIEWPORT_HEIGHT_DEFAULT: f64 = 2.0;
@@ -28,6 +28,11 @@ pub struct Camera {
     pub aperture: f64,
     /// Focus ditance.
     pub focus_dist: f64,
+
+    /// Shutter opening time.
+    pub time0: f64,
+    /// Shutter closing time.
+    pub time1: f64,
 
     /// Viewport height of the Camera.
     viewport_height: f64,
@@ -65,6 +70,8 @@ impl Default for Camera {
             aspect_ratio: ASPECT_RATIO_DEFAULT,
             aperture: 0.0,
             focus_dist: 0.0,
+            time0: 0.0,
+            time1: 0.0,
 
             viewport_height: VIEWPORT_HEIGHT_DEFAULT,
             viewport_width: VIEWPORT_WIDTH_DEFAULT,
@@ -95,6 +102,8 @@ impl Camera {
         aspect_ratio: f64,
         aperture: f64,
         focus_dist: f64,
+        time0: f64,
+        time1: f64,
     ) -> Self {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();
@@ -116,6 +125,8 @@ impl Camera {
             look_at,
             view_up: vup,
             vfov,
+            time0,
+            time1,
             aspect_ratio,
             viewport_height: view_h,
             viewport_width: view_w,
@@ -141,6 +152,7 @@ impl Camera {
             dir: self.lower_left_corner + s * self.horizontal + t * self.vertical
                 - self.origin
                 - offset,
+            tm: random_float_range(self.time0, self.time1),
         }
     }
 

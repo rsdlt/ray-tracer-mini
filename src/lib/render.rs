@@ -116,7 +116,7 @@ fn ray_color(ray: &Ray, world: &HittableList, depth: usize) -> Color {
     }
 
     if let Some(hit_record) = world.hit(ray, 0.001, INFINITY) {
-        let mut scattered = Ray::new(Point3::default(), Vec3::default());
+        let mut scattered = Ray::new(Point3::default(), Vec3::default(), 0.0);
         let mut attenuation = Color::black();
 
         if hit_record
