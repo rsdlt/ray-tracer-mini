@@ -13,7 +13,7 @@ fn main() {
     let start = SystemTime::now();
 
     match render() {
-        Ok(img_file) => {
+        Ok(_) => {
             println!(
                 "Total rendering time: {:5.2?}\nCheck your image at: ./image.ppm",
                 start.elapsed().expect("Error calculating SystemTime")

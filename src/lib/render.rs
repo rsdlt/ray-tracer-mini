@@ -42,7 +42,7 @@ impl std::iter::Sum for ScanString {
 
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
-    let scene = scene_random_spheres::RandomSpheres::generate_scene();
+    let scene = scene_random_spheres::RandomSpheres::generate_scene()?;
 
     // Render
     let path = Path::new("image.ppm");
@@ -54,11 +54,18 @@ pub fn render() -> Result<File, std::io::Error> {
     ));
 
     println!(
-        "\nRendering image now...\nWxH: {}x{} px\nAspect ratio: {}:{}\nRecursion depth:{}\nSamples per pixel: {}\n\
-        Number of shapes: {}\nEstimated calculations: {}\n",
-        scene.image.width, scene.image.height, ASPECT_RATIO_WIDTH_DEFAULT, ASPECT_RATIO_HEIGHT_DEFAULT,
-        scene.image.max_depth, scene.image.samples_per_pixel,  scene.world.total_shapes(),
-    (scene.image.width * scene.image.height * scene.image.max_depth * scene.image.samples_per_pixel).separate_with_commas()
+        "\nImage info:\nW x H: {}x{} px\nRecursion depth:{}\nSamples per pixel: {}\n\
+        Number of shapes: {}\nEstimated calculations: {}\nRendering now...\n",
+        scene.image.width,
+        scene.image.height,
+        scene.image.max_depth,
+        scene.image.samples_per_pixel,
+        scene.world.total_shapes(),
+        (scene.image.width
+            * scene.image.height
+            * scene.image.max_depth
+            * scene.image.samples_per_pixel)
+            .separate_with_commas()
     );
 
     // --- Parallel Iteration to calculate Lines per Render Image (Returns Render)

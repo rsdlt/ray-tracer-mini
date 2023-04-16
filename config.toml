@@ -1,0 +1,5 @@
+# Configuration for the Image to be rendered
+img_width = 1200
+img_height = 800
+depth = 50
+samples = 500

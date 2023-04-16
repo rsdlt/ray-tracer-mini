@@ -14,4 +14,6 @@ path = "src/lib/mod.rs"
 derive_more = "0.99.17"
 rand = "=0.8.5"
 rayon = "=1.7.0"
-thousands = "0.2.0"
+serde = { version = "=1.0.160", features = ["derive"] }
+thousands = "=0.2.0"
+toml = "=0.7.3"

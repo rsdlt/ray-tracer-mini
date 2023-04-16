@@ -7,7 +7,7 @@ use crate::color::Color;
 use crate::hittable::HittableList;
 use crate::image::Image;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal, Materials};
-use crate::scenes::SceneConfig;
+use crate::scenes::{Config, SceneConfig};
 use crate::shapes::sphere::Sphere;
 use crate::shapes::Shapes;
 use crate::utilities::{random_float, random_float_range, PI};
@@ -29,9 +29,16 @@ impl SceneConfig for RandomSpheres {
     type Camera = Camera;
     type Scene = RandomSpheres;
 
-    fn new_image() -> Self::Image {
+    fn new_image() -> Result<Self::Image, std::io::Error> {
         // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
-        Image::new(256, 256, 50, 10)
+
+        let config = Config::load_config()?;
+        Ok(Image::new(
+            config.img_width,
+            config.img_height,
+            config.samples,
+            config.depth,
+        ))
     }
 
     fn new_world() -> Self::World {
@@ -127,15 +134,15 @@ impl SceneConfig for RandomSpheres {
         )
     }
 
-    fn generate_scene() -> Self::Scene {
-        let image = Self::new_image();
+    fn generate_scene() -> Result<Self::Scene, std::io::Error> {
+        let image = Self::new_image()?;
         let camera = Self::new_camera(image.aspect_ratio);
         let world = Self::new_world();
 
-        Self {
+        Ok(Self {
             image,
             camera,
             world,
-        }
+        })
     }
 }
