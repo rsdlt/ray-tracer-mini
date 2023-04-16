@@ -12,6 +12,10 @@ An image with the following configurations renders in ~382 seconds in a Core i7-
 
 ![Final Ray Traced Image](/img_history/image29.png)
 
+Motion Blur:
+
+![Ray Trace Motion Blur](/img_history/image30.png)
+
 ## Usage:
 
 1. Build project: `cargo build --release`.
