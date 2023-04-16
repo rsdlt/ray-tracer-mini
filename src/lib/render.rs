@@ -3,11 +3,13 @@
 #![warn(missing_docs, missing_debug_implementations)]
 #![allow(unused_assignments, clippy::write_with_newline)]
 
+use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use std::fs::File;
 use std::io::Write;
 use std::ops::Add;
 use std::path::Path;
+use std::sync::Arc;
 use thousands::Separable;
 
 use crate::color::Color;
@@ -52,20 +54,31 @@ pub fn render() -> Result<File, std::io::Error> {
         scene.image.width, scene.image.height
     ));
 
+    let est_calculations = scene.image.width
+        * scene.image.height
+        * scene.image.max_depth
+        * scene.image.samples_per_pixel;
+
     println!(
-        "\nImage info:\nW x H: {}x{} px\nRecursion depth:{}\nSamples per pixel: {}\n\
-        Number of shapes: {}\nEstimated calculations: {}\nRendering now...\n",
+        "\nImage information:\n - W x H: {}x{} px\n - Recursion depth:{}\n - Samples per pixel: {}\n \
+          - Number of shapes: {}\n - Estimated calculations: {}\n\nRendering now:",
         scene.image.width,
         scene.image.height,
         scene.image.max_depth,
         scene.image.samples_per_pixel,
         scene.world.total_shapes(),
-        (scene.image.width
-            * scene.image.height
-            * scene.image.max_depth
-            * scene.image.samples_per_pixel)
-            .separate_with_commas()
+        &est_calculations.separate_with_commas()
     );
+    let pb = ProgressBar::new(scene.image.height as u64);
+    pb.set_style(
+        ProgressStyle::with_template(
+            "{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {percent}%",
+        )
+        .unwrap()
+        .progress_chars("#>-"),
+    );
+    let pb_counter = Arc::new(&pb);
+    let pb_counter_iter = Arc::clone(&pb_counter);
 
     // --- Parallel Iteration to calculate Lines per Render Image (Returns Render)
     let pixels_height_vec = vec![ScanString("".to_string()); scene.image.height];
@@ -100,9 +113,12 @@ pub fn render() -> Result<File, std::io::Error> {
                     })
                     .sum::<ScanString>();
                 //--------------
+                pb_counter_iter.inc(1);
                 line.clone() + my_scan_line
             })
             .sum::<ScanString>();
+
+    pb_counter.finish();
 
     write!(img_file, "{}", render.0)?;
 
