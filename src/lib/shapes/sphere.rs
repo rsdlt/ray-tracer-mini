@@ -1,8 +1,9 @@
 //! This module defines the Sphere type and its implementation of the Hittable trait.
 
 #![warn(missing_docs)]
-#![allow(missing_debug_implementations)]
+#![allow(missing_debug_implementations, unused_variables)]
 
+use crate::aabb::AaBb;
 use crate::color::Color;
 use crate::hittable::{HitRecord, Hittable};
 use crate::materials::lambertian::Lambertian;
@@ -75,5 +76,13 @@ impl Hittable for Sphere {
         hit_record.material = self.material;
 
         Some(hit_record)
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AaBb> {
+        let out_box = AaBb {
+            minimum: self.center - Vec3::new(self.radius, self.radius, self.radius),
+            maximum: self.center + Vec3::new(self.radius, self.radius, self.radius),
+        };
+        Some(out_box)
     }
 }

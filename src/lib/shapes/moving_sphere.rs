@@ -3,6 +3,7 @@
 #![warn(missing_docs)]
 #![allow(missing_debug_implementations)]
 
+use crate::aabb::AaBb;
 use crate::color::Color;
 use crate::hittable::{HitRecord, Hittable};
 use crate::materials::lambertian::Lambertian;
@@ -48,6 +49,7 @@ impl Default for MovingSphere {
 }
 
 impl MovingSphere {
+    /// Creates and returns an owned moving sphere.
     pub fn new(
         center0: Point3,
         center1: Point3,
@@ -65,6 +67,7 @@ impl MovingSphere {
             material,
         }
     }
+    /// Returns the center of a moving sphere.
     pub fn center(&self, time: f64) -> Point3 {
         self.center0
             + ((time - self.time0) / (self.time1 - self.time0)) * (self.center1 - self.center0)
@@ -102,5 +105,18 @@ impl Hittable for MovingSphere {
         hit_record.material = self.material;
 
         Some(hit_record)
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AaBb> {
+        let box0 = AaBb::new(
+            self.center(time0) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time0) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+        let box1 = AaBb::new(
+            self.center(time1) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time1) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+        let output_box = AaBb::surrounding_box(box0, box1);
+        Some(output_box)
     }
 }

@@ -2,8 +2,9 @@
 //! shapes and collect Scenes, respectively.
 
 #![warn(missing_docs)]
-#![allow(missing_debug_implementations)]
+#![allow(missing_debug_implementations, clippy::derivable_impls)]
 
+use crate::aabb::AaBb;
 use crate::color::Color;
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
@@ -63,6 +64,10 @@ impl Default for HitRecord {
 pub trait Hittable {
     /// The hit function of a shape that implements the Hittable trait.
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+
+    /// The bounding box function of a shape that implements the Hittable trait.
+    /// Returns None if shape has no primitive boxes (e.g. infinite plane)
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AaBb>;
 }
 
 /// Structure that allows the collection of Shapes to create a Scene.
@@ -89,15 +94,29 @@ impl HittableList {
         self.shapes.push(shape);
     }
 
-    /// Creates and returns an empty collection of shapes.
-
     /// Returns the number of shapes in the scene.
     pub fn total_shapes(&self) -> usize {
         self.shapes.len()
     }
 
+    // /// Function that takes in a Ray, and "counts" a hit if "t" is between t_man and t_max boundaries.
+    // pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    //     let mut hit_something: Option<HitRecord> = None;
+    //     let mut closest_so_far = t_max;
+    //
+    //     for shape in self.shapes.iter() {
+    //         if let Some(hit) = shape.hit(&ray, t_min, closest_so_far) {
+    //             closest_so_far = hit.t;
+    //             hit_something = Some(hit)
+    //         }
+    //     }
+    //     hit_something
+    // }
+}
+
+impl Hittable for HittableList {
     /// Function that takes in a Ray, and "counts" a hit if "t" is between t_man and t_max boundaries.
-    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut hit_something: Option<HitRecord> = None;
         let mut closest_so_far = t_max;
 
@@ -108,5 +127,27 @@ impl HittableList {
             }
         }
         hit_something
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AaBb> {
+        if self.shapes.is_empty() {
+            return None;
+        }
+
+        let temp_box = AaBb::default();
+        let mut output_box = AaBb::default();
+        let mut first_box = true;
+
+        for shape in self.shapes.iter() {
+            shape.bounding_box(time0, time1)?;
+            if first_box {
+                output_box = temp_box;
+            } else {
+                output_box = AaBb::surrounding_box(output_box, temp_box);
+            }
+            first_box = false;
+        }
+
+        Some(output_box)
     }
 }

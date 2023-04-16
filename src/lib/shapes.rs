@@ -2,6 +2,7 @@
 
 #![warn(missing_docs, missing_debug_implementations)]
 
+use crate::aabb::AaBb;
 use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use crate::shapes::moving_sphere::MovingSphere;
@@ -27,6 +28,13 @@ impl Hittable for Shapes {
         match self {
             Shapes::Sphere(sphere) => sphere.hit(ray, t_min, t_max),
             Shapes::MovingSphere(sphere) => sphere.hit(ray, t_min, t_max),
+        }
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<AaBb> {
+        match self {
+            Shapes::Sphere(sphere) => sphere.bounding_box(time0, time1),
+            Shapes::MovingSphere(sphere) => sphere.bounding_box(time0, time1),
         }
     }
 }

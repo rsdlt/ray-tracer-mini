@@ -11,7 +11,7 @@ use std::path::Path;
 use thousands::Separable;
 
 use crate::color::Color;
-use crate::hittable::HittableList;
+use crate::hittable::{Hittable, HittableList};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};

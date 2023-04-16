@@ -6,7 +6,7 @@
 use crate::color::Color;
 use crate::utilities::{random_float, random_float_range, EPSILON, NEAR_ZERO};
 use derive_more::{Add, Neg, Sub};
-use std::ops::{Div, Mul};
+use std::ops::{Div, Index, Mul};
 
 /// Type representing a geometric 3D vector with X, Y and Z coordinates.
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
@@ -159,6 +159,19 @@ impl Vec3 {
             x: 1.0,
             y: 1.0,
             z: 1.0,
+        }
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("wrong index for Vec3: {}", index),
         }
     }
 }
