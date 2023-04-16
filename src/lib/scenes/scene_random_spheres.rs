@@ -51,7 +51,7 @@ impl SceneConfig for RandomSpheres {
         ));
 
         // Create the world scene
-        let mut world = HittableList::new();
+        let mut world = HittableList::default();
         world.add(sphere_ground);
 
         // Create the scene

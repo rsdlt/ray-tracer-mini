@@ -12,7 +12,6 @@ use thousands::Separable;
 
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::image::{ASPECT_RATIO_HEIGHT_DEFAULT, ASPECT_RATIO_WIDTH_DEFAULT};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
 use crate::scenes::{scene_random_spheres, SceneConfig};

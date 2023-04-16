@@ -72,6 +72,12 @@ pub struct HittableList {
     pub shapes: Vec<Shapes>,
 }
 
+impl Default for HittableList {
+    fn default() -> Self {
+        Self { shapes: vec![] }
+    }
+}
+
 impl HittableList {
     /// Clears the collection of any shapes.
     pub fn clear(&mut self) {
@@ -84,9 +90,6 @@ impl HittableList {
     }
 
     /// Creates and returns an empty collection of shapes.
-    pub fn new() -> Self {
-        Self { shapes: vec![] }
-    }
 
     /// Returns the number of shapes in the scene.
     pub fn total_shapes(&self) -> usize {
