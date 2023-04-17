@@ -10,7 +10,7 @@ use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Me
 use crate::scenes::{Config, SceneConfig};
 use crate::shapes::moving_sphere::MovingSphere;
 use crate::shapes::sphere::Sphere;
-use crate::shapes::Shapes;
+use crate::shapes::HittableObjects;
 use crate::utilities::{random_float, random_float_range, PI};
 use crate::vector::{Point3, Vec3};
 
@@ -45,7 +45,7 @@ impl SceneConfig for RandomSpheres {
     fn new_world() -> Self::World {
         // Create the ground
         let material_ground = Materials::Lambertians(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-        let sphere_ground = Shapes::Sphere(Sphere::new(
+        let sphere_ground = HittableObjects::Sphere(Sphere::new(
             Point3::new(0.0, -1_000.0, 0.0),
             1_000.0,
             material_ground,
@@ -71,7 +71,7 @@ impl SceneConfig for RandomSpheres {
                         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
                         let sphere_material = Materials::Lambertians(Lambertian::new(albedo));
                         let center2 = center + Vec3::new(0.0, random_float_range(0.0, 0.5), 0.0);
-                        let moving_sphere = Shapes::MovingSphere(MovingSphere::new(
+                        let moving_sphere = HittableObjects::MovingSphere(MovingSphere::new(
                             center,
                             center2,
                             0.0,
@@ -86,13 +86,13 @@ impl SceneConfig for RandomSpheres {
                         let albedo = Color::random(0.5, 1.0);
                         let fuzz = random_float_range(0.0, 0.5);
                         let sphere_material = Materials::Metals(Metal::new(albedo, fuzz));
-                        let sphere = Shapes::Sphere(Sphere::new(center, 0.2, sphere_material));
+                        let sphere = HittableObjects::Sphere(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     } else {
                         // glass
                         let sphere_material = Materials::Dielectrics(Dielectric::new(1.5));
-                        let sphere = Shapes::Sphere(Sphere::new(center, 0.2, sphere_material));
+                        let sphere = HittableObjects::Sphere(Sphere::new(center, 0.2, sphere_material));
 
                         world.add(sphere);
                     }
@@ -100,21 +100,21 @@ impl SceneConfig for RandomSpheres {
             }
         }
         let material_1 = Materials::Dielectrics(Dielectric::new(1.5));
-        world.add(Shapes::Sphere(Sphere::new(
+        world.add(HittableObjects::Sphere(Sphere::new(
             Point3::new(0.0, 1.0, 0.0),
             1.0,
             material_1,
         )));
 
         let material_2 = Materials::Lambertians(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-        world.add(Shapes::Sphere(Sphere::new(
+        world.add(HittableObjects::Sphere(Sphere::new(
             Point3::new(-4.0, 1.0, 0.0),
             1.0,
             material_2,
         )));
 
         let material_3 = Materials::Metals(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-        world.add(Shapes::Sphere(Sphere::new(
+        world.add(HittableObjects::Sphere(Sphere::new(
             Point3::new(4.0, 1.0, 0.0),
             1.0,
             material_3,
