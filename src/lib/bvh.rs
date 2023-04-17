@@ -42,7 +42,9 @@ impl BhvNode {
             left = list.objects[start].clone();
             right = list.objects[start].clone();
         } else if object_span == 2 {
-            if comparator(list.objects[start].clone(), list.objects[start + 1].clone()) {
+            if BhvNode::box_compare_axis(&list.objects[start], &list.objects[start + 1], axis)
+                == Ordering::Less
+            {
                 left = list.objects[start].clone();
                 right = list.objects[start + 1].clone()
             } else {
@@ -50,7 +52,8 @@ impl BhvNode {
                 right = list.objects[start].clone();
             }
         } else {
-            list.objects.sort();
+            // list.objects.sort();
+            list.objects.sort_by(comparator);
             let mid = start + object_span / 2;
 
             left = HittableObjects::BhvNode(Self::new(list, start, mid, time0, time1));
@@ -75,24 +78,26 @@ impl BhvNode {
 
     #[rustfmt::skip]
     /// Compare AaBb boxes via their axis
-    pub fn box_compare_axis(a: HittableObjects, b: HittableObjects, axis: usize) -> bool {
+    pub fn box_compare_axis<'a, 'b>(a: &'a HittableObjects, b: &'b HittableObjects, axis: usize) -> Ordering {
         let box_a = a.bounding_box(0.0, 0.0).expect("No bounding box in bhd_node constructor");
         let box_b = b.bounding_box(0.0, 0.0).expect("No bounding box in bhd_node constructor");
 
-        box_a.min()[axis] < box_b.min()[axis]
+        if box_a.min()[axis] < box_b.min()[axis] {
+            Ordering::Less
+        } else{ Ordering::Greater}
     }
 
     /// Compare AaBb boxes via their X axis
-    pub fn box_x_compare(a: HittableObjects, b: HittableObjects) -> bool {
-        BhvNode::box_compare_axis(a, b, 0)
+    pub fn box_x_compare<'a, 'b>(a: &'a HittableObjects, b: &'b HittableObjects) -> Ordering {
+        BhvNode::box_compare_axis(&a, &b, 0)
     }
     /// Compare AaBb boxes via their Y axis
-    pub fn box_y_compare(a: HittableObjects, b: HittableObjects) -> bool {
-        BhvNode::box_compare_axis(a, b, 1)
+    pub fn box_y_compare<'a, 'b>(a: &'a HittableObjects, b: &'b HittableObjects) -> Ordering {
+        BhvNode::box_compare_axis(&a, &b, 1)
     }
     /// Compare AaBb boxes via their Z axis
-    pub fn box_z_compare(a: HittableObjects, b: HittableObjects) -> bool {
-        BhvNode::box_compare_axis(a, b, 2)
+    pub fn box_z_compare<'a, 'b>(a: &'a HittableObjects, b: &'b HittableObjects) -> Ordering {
+        BhvNode::box_compare_axis(&a, &b, 2)
     }
 
     /// Full Eq comparison of AaBb boxes.
