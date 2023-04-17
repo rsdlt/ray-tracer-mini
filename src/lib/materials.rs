@@ -12,7 +12,7 @@ use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Me
 use crate::ray::Ray;
 
 /// Materials that can be applied to a Shape.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum Materials {
     /// Metal materials.
     Metals(Metal),

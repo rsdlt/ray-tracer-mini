@@ -9,10 +9,13 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
 use crate::ray::Ray;
+use crate::textures::solid_color::SolidColor;
+use crate::textures::Texture;
+use crate::utilities::PI;
 use crate::vector::{Point3, Vec3};
 
 /// A Sphere with center, radius and material.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Sphere {
     /// Location of the center of the Sphere.
     center: Point3,
@@ -31,12 +34,29 @@ impl Sphere {
             material,
         }
     }
+
+    // get the sphere's texture coordinates.
+    // p: a given point on the sphere of radius one, centered at the origin.
+    // u: returned value [0,1] of angle around the Y axis from X=-1.
+    // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+    //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+    //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+    //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+    fn get_sphere_uv(&self, p: Point3, u: &mut f64, v: &mut f64) {
+        let theta = (-p.y).acos();
+        let phi = (-p.z).atan2(p.x) + PI;
+
+        *u = phi / (2.0 * PI);
+        *v = theta / PI;
+    }
 }
 impl Default for Sphere {
     fn default() -> Self {
         let center = Point3::default();
         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
-        let sphere_material = Materials::Lambertians(Lambertian::new(albedo));
+        let sphere_material = Materials::Lambertians(Lambertian::new(Texture::SolidColor(
+            SolidColor::new(Color::black()),
+        )));
         Self {
             center,
             radius: 1.0,
@@ -72,8 +92,9 @@ impl Hittable for Sphere {
         hit_record.t = root;
         hit_record.p = ray.at(hit_record.t);
         let outward_normal = (hit_record.p - self.center) / self.radius;
+        self.get_sphere_uv(outward_normal, &mut hit_record.u, &mut hit_record.v);
         hit_record.set_face_normal(ray, outward_normal);
-        hit_record.material = self.material;
+        hit_record.material = self.material.clone();
 
         Some(hit_record)
     }

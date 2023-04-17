@@ -10,6 +10,8 @@ use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
 use crate::ray::Ray;
 use crate::shapes::HittableObjects;
+use crate::textures::solid_color::SolidColor;
+use crate::textures::Texture;
 use crate::vector::{Point3, Vec3};
 
 /// The HitRecord type is used to record a ray intersection with a Shape that contains an specific Material.
@@ -22,6 +24,10 @@ pub struct HitRecord {
     pub material: Materials,
     /// "t" parameter of a Ray where it hit a shape.
     pub t: f64,
+    /// 'u' coordinate for textures.
+    pub u: f64,
+    /// 'v' coordinate for textures.
+    pub v: f64,
     /// Used to determine if the Ray was inside (false) or outside (true) a shape when it hit.
     pub front_face: bool,
 }
@@ -37,24 +43,36 @@ impl HitRecord {
     }
 
     /// Function creates and returns an owned HitRecord.
-    pub fn new(p: Point3, normal: Vec3, material: Materials, t: f64, front_face: bool) -> Self {
+    pub fn new(
+        p: Point3,
+        normal: Vec3,
+        material: Materials,
+        t: f64,
+        u: f64,
+        v: f64,
+        front_face: bool,
+    ) -> Self {
         Self {
             p,
             normal,
             material,
             t,
+            u,
+            v,
             front_face,
         }
     }
 }
 impl Default for HitRecord {
     fn default() -> Self {
-        let mat = Lambertian::new(Color::black());
+        let mat = Lambertian::new(Texture::SolidColor(SolidColor::new(Color::black())));
         Self {
             p: Point3::default(),
             normal: Vec3::default(),
             material: Materials::Lambertians(mat),
             t: 0.0,
+            u: 0.0,
+            v: 0.0,
             front_face: false,
         }
     }

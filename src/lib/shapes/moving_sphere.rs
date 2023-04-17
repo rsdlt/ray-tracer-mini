@@ -9,10 +9,12 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::materials::lambertian::Lambertian;
 use crate::materials::Materials;
 use crate::ray::Ray;
+use crate::textures::solid_color::SolidColor;
+use crate::textures::Texture;
 use crate::vector::{Point3, Vec3};
 
 /// A Moving Sphere with center, radius and material.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct MovingSphere {
     /// Center location of the moving sphere at time0
     center0: Point3,
@@ -36,7 +38,9 @@ impl Default for MovingSphere {
         let time1 = 0.0;
         let radius = 1.0;
         let albedo = Color::random(0.0, 1.0) * Color::random(0.0, 1.0);
-        let sphere_material = Materials::Lambertians(Lambertian::new(albedo));
+        let sphere_material = Materials::Lambertians(Lambertian::new(Texture::SolidColor(
+            SolidColor::new(albedo),
+        )));
         Self {
             center0,
             center1,
@@ -102,7 +106,7 @@ impl Hittable for MovingSphere {
         hit_record.p = ray.at(hit_record.t);
         let outward_normal = (hit_record.p - self.center(ray.time())) / self.radius;
         hit_record.set_face_normal(ray, outward_normal);
-        hit_record.material = self.material;
+        hit_record.material = self.material.clone();
 
         Some(hit_record)
     }
