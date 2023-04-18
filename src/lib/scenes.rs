@@ -18,6 +18,9 @@ pub mod scene_random_spheres;
 /// Defines a scene with two spheres touching each other.  
 pub mod scene_two_spheres;
 
+/// Dynamic dispatch of Functions that create Scenes.
+type CreateWorldFunctions = Box<dyn Fn() -> HittableList>;
+
 /// Type defining the configuration and generation of a Scene.
 pub struct Scene {
     /// Image component of the scene.
@@ -26,18 +29,45 @@ pub struct Scene {
     pub world: HittableList,
     /// Camera for the scene.
     pub camera: Camera,
+    /// The rendered scene
+    pub rendered_scene_name: String,
+    /// Collection of function that create scenes.
+    scenes: Vec<CreateWorldFunctions>,
 }
 impl Scene {
     /// Generates the scene that is returned to the renderer.
-    pub fn generate_scene<F: FnOnce() -> HittableList>(config: &Config, world_creator: F) -> Scene {
+    pub fn generate_scene(config: &Config) -> Scene {
         let image = Self::create_image(&config);
         let camera = Self::set_camera(image.aspect_ratio);
-        let world = Self::create_world(world_creator);
+        let scenes: Vec<CreateWorldFunctions> = vec![
+            Box::new(scene_two_spheres::create_world),
+            Box::new(scene_random_spheres::create_world),
+        ];
 
+        let selector = config.scene.clone();
+        let world_creator;
+        let rendered_scene_name;
+
+        match selector.as_str() {
+            "two spheres" => {
+                world_creator = &scenes[0];
+                rendered_scene_name = "Two Spheres".to_string()
+            }
+
+            "random spheres" => {
+                world_creator = &scenes[1];
+                rendered_scene_name = "Random Spheres".to_string()
+            }
+            _ => panic!("wrong scene name in config file"),
+        }
+
+        let world = Self::create_world(world_creator);
         Self {
             image,
             camera,
             world,
+            rendered_scene_name,
+            scenes,
         }
     }
     fn create_image(config: &Config) -> Image {
@@ -81,6 +111,7 @@ pub struct Config {
     img_height: usize,
     depth: usize,
     samples: usize,
+    scene: String,
 }
 
 impl Config {

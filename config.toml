@@ -3,3 +3,6 @@ img_width = 400
 img_height = 225
 depth = 50
 samples = 100
+
+# "random spheres", "two spheres"
+scene = "two spheres"

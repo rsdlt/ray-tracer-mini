@@ -45,10 +45,10 @@ pub fn render() -> Result<File, std::io::Error> {
     // Load Config
     let config = Config::load_config()?;
 
-    let world_creator = scene_two_spheres::TwoSpheres::create_world;
+    // let world_creator = scene_two_spheres::TwoSpheres::create_world;
     // let world_creator = scene_random_spheres::RandomSpheres::create_world;
 
-    let scene = Scene::generate_scene(&config, world_creator);
+    let scene = Scene::generate_scene(&config);
 
     // Render
     let path = Path::new("image.ppm");
@@ -66,13 +66,15 @@ pub fn render() -> Result<File, std::io::Error> {
 
     println!(
         "\nImage information:\n - W x H: {} x {} px\n - Recursion depth:{}\n - Samples per pixel: {}\n \
-          - Number of shapes: {}\n - Estimated calculations: {}\n\nRendering now:",
+          - Number of shapes: {}\n - Estimated calculations: {}\n - Scene: {}\n\nRendering now:",
         scene.image.width,
         scene.image.height,
         scene.image.max_depth,
         scene.image.samples_per_pixel,
         scene.world.total_shapes(),
-        &est_calculations.separate_with_commas()
+        &est_calculations.separate_with_commas(),
+        scene.rendered_scene_name
+
     );
     let pb = ProgressBar::new(scene.image.height as u64);
     pb.set_style(
