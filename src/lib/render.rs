@@ -16,8 +16,7 @@ use crate::color::Color;
 use crate::hittable::{Hittable, HittableList};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
-use crate::scenes::Scene;
-use crate::scenes::{scene_random_spheres, Config};
+use crate::scenes::{scene_random_spheres, scene_two_spheres, Config, Scene};
 use crate::utilities::{random_float, INFINITY};
 use crate::vector::{Point3, Vec3};
 
@@ -43,8 +42,12 @@ impl std::iter::Sum for ScanString {
 }
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
+    // Load Config
     let config = Config::load_config()?;
-    let world_creator = scene_random_spheres::RandomSpheres::new_world;
+
+    let world_creator = scene_two_spheres::TwoSpheres::create_world;
+    // let world_creator = scene_random_spheres::RandomSpheres::create_world;
+
     let scene = Scene::generate_scene(&config, world_creator);
 
     // Render

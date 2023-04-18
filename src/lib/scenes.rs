@@ -15,6 +15,8 @@ use std::path::Path;
 
 /// Defines a random scene of Spheres of different sizes and material.
 pub mod scene_random_spheres;
+/// Defines a scene with two spheres touching each other.  
+pub mod scene_two_spheres;
 
 /// Type defining the configuration and generation of a Scene.
 pub struct Scene {

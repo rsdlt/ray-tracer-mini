@@ -1,5 +1,3 @@
-//! This module defines a random scene that include several Sphere of different sizes and Materials.
-
 #![allow(missing_docs)]
 
 use crate::color::Color;
@@ -17,7 +15,7 @@ use crate::vector::{Point3, Vec3};
 pub struct RandomSpheres;
 
 impl RandomSpheres {
-    pub fn new_world() -> HittableList {
+    pub fn create_world() -> HittableList {
         // Create the ground
         let checker_texture = Texture::Checker(Checker::new(
             Color::new(0.0, 0.0, 0.0),
