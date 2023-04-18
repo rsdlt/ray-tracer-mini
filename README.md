@@ -28,7 +28,7 @@ Progress bar indicator:
 
 1. Build project: `cargo build --release`.
 2. Configure ray tracer:
-   - Edit `config.toml` to set image width, image height, recursion depth and samples per pixel.
+   - Edit `config.toml` to set image width, image height, recursion depth, samples per pixel and scene to be rendered.
    - Copy `config.toml` to target directory `target/release`.
 3. Render image: `./target/release/app`.
 4. View image: ` ./target/release/image.ppm`.
