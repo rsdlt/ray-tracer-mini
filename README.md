@@ -18,7 +18,7 @@ Motion Blur:
 
 Checkered Textures:
 
-![Ray Trace Checkered Textures](/img_history/image31.png)
+![Ray Trace Checkered Textures](/img_history/image32.png)
 
 Progress bar indicator:
 

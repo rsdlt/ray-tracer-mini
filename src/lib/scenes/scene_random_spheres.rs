@@ -48,7 +48,7 @@ impl SceneConfig for RandomSpheres {
     fn new_world() -> Self::World {
         // Create the ground
         let checker_texture = Texture::Checker(Checker::new(
-            Color::new(0.2, 0.3, 0.1),
+            Color::new(0.0, 0.0, 0.0),
             Color::new(0.9, 0.9, 0.9),
         ));
         let material_ground = Materials::Lambertians(Lambertian::new(checker_texture));
