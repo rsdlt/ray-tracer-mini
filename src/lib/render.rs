@@ -16,7 +16,7 @@ use crate::color::Color;
 use crate::hittable::{Hittable, HittableList};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
-use crate::scenes::{scene_random_spheres, SceneConfig};
+use crate::scenes::{scene_random_spheres, Config, SceneConfig};
 use crate::utilities::{random_float, INFINITY};
 use crate::vector::{Point3, Vec3};
 
@@ -40,10 +40,11 @@ impl std::iter::Sum for ScanString {
         my_string
     }
 }
-
+use crate::scenes::Scene;
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
-    let scene = scene_random_spheres::RandomSpheres::generate_scene()?;
+    let config = Config::load_config()?;
+    let scene = Scene::generate_scene(&config);
 
     // Render
     let path = Path::new("image.ppm");

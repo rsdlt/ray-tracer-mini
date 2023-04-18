@@ -18,34 +18,10 @@ use crate::utilities::{random_float, random_float_range, PI};
 use crate::vector::{Point3, Vec3};
 
 /// Type that collects a scene full of random spheres with three different materials.
-pub struct RandomSpheres {
-    /// Image component of the scene.
-    pub image: Image,
-    /// Collection of spheres and its position in the scene.
-    pub world: HittableList,
-    /// Camera for the scene.
-    pub camera: Camera,
-}
+pub struct RandomSpheres;
 
-impl SceneConfig for RandomSpheres {
-    type Image = Image;
-    type World = HittableList;
-    type Camera = Camera;
-    type Scene = RandomSpheres;
-
-    fn new_image() -> Result<Self::Image, std::io::Error> {
-        // 1 thread: 1hr 30min; let image_width = 600usize; let samples_per_pixel = 200_usize; let max_depth = 30_usize;
-
-        let config = Config::load_config()?;
-        Ok(Image::new(
-            config.img_width,
-            config.img_height,
-            config.samples,
-            config.depth,
-        ))
-    }
-
-    fn new_world() -> Self::World {
+impl RandomSpheres {
+    pub fn new_world() -> HittableList {
         // Create the ground
         let checker_texture = Texture::Checker(Checker::new(
             Color::new(0.0, 0.0, 0.0),
@@ -134,39 +110,5 @@ impl SceneConfig for RandomSpheres {
         )));
 
         world
-    }
-
-    fn new_camera(aspect_ratio: f64) -> Self::Camera {
-        // Camera
-        let look_from = Point3::new(13.0, 2.0, 3.0);
-        let look_at = Point3::new(0.0, 0.0, 0.0);
-        let vup = Vec3::new(0.0, 1.0, 0.0);
-        let dist_to_focus = 10.0;
-        let aperture = 0.1;
-        let _big_r = (PI / 4.0).cos();
-
-        Camera::new(
-            look_from,
-            look_at,
-            vup,
-            20.0,
-            aspect_ratio,
-            aperture,
-            dist_to_focus,
-            0.0,
-            1.0,
-        )
-    }
-
-    fn generate_scene() -> Result<Self::Scene, std::io::Error> {
-        let image = Self::new_image()?;
-        let camera = Self::new_camera(image.aspect_ratio);
-        let world = Self::new_world();
-
-        Ok(Self {
-            image,
-            camera,
-            world,
-        })
     }
 }

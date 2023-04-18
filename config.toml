@@ -1,9 +1,5 @@
 # Configuration for the Image to be rendered
-#img_width = 400
-#img_height = 225
-#depth = 50
-#samples = 100
-img_width = 800
-img_height = 450
-depth = 70
-samples = 400
+img_width = 400
+img_height = 225
+depth = 50
+samples = 100

@@ -3,6 +3,11 @@
 #![warn(missing_docs)]
 #![allow(missing_debug_implementations)]
 
+use crate::camera::Camera;
+use crate::hittable::HittableList;
+use crate::image::Image;
+use crate::utilities::PI;
+use crate::vector::{Point3, Vec3};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::{ErrorKind, Read};
@@ -30,6 +35,60 @@ pub trait SceneConfig {
     fn new_camera(aspect_ratio: f64) -> Self::Camera;
     /// Generates the scene that is returned to the renderer.
     fn generate_scene() -> Result<Self::Scene, std::io::Error>;
+}
+
+pub struct Scene {
+    /// Image component of the scene.
+    pub image: Image,
+    /// Collection of spheres and its position in the scene.
+    pub world: HittableList,
+    /// Camera for the scene.
+    pub camera: Camera,
+}
+impl Scene {
+    pub fn generate_scene(config: &Config) -> Scene {
+        let image = Self::create_image(&config);
+        let camera = Self::set_camera(image.aspect_ratio);
+        let world = Self::create_world(scene_random_spheres::RandomSpheres::new_world);
+
+        Self {
+            image,
+            camera,
+            world,
+        }
+    }
+    fn create_image(config: &Config) -> Image {
+        Image::new(
+            config.img_width,
+            config.img_height,
+            config.samples,
+            config.depth,
+        )
+    }
+    fn set_camera(aspect_ratio: f64) -> Camera {
+        let look_from = Point3::new(13.0, 2.0, 3.0);
+        let look_at = Point3::new(0.0, 0.0, 0.0);
+        let vup = Vec3::new(0.0, 1.0, 0.0);
+        let dist_to_focus = 10.0;
+        let aperture = 0.1;
+        let _big_r = (PI / 4.0).cos();
+
+        Camera::new(
+            look_from,
+            look_at,
+            vup,
+            20.0,
+            aspect_ratio,
+            aperture,
+            dist_to_focus,
+            0.0,
+            1.0,
+        )
+    }
+    fn create_world<F: FnOnce() -> HittableList>(configurator: F) -> HittableList {
+        let world = configurator();
+        world
+    }
 }
 
 /// Type used to load the config.toml configuration.
