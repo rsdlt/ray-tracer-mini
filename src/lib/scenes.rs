@@ -16,27 +16,7 @@ use std::path::Path;
 /// Defines a random scene of Spheres of different sizes and material.
 pub mod scene_random_spheres;
 
-/// Trait defining the configuration and generation of a Scene.
-pub trait SceneConfig {
-    /// Image to be rendered.
-    type Image;
-    /// Collection containing all the shapes to be rendered in the scene.
-    type World;
-    /// Camera for the scene.
-    type Camera;
-    /// Scene that contains an image, world and camera and is passed to the renderer.
-    type Scene;
-
-    /// Creates a new Image for the scene.
-    fn new_image() -> Result<Self::Image, std::io::Error>;
-    /// Creates a new collection of shapes for the scene.
-    fn new_world() -> Self::World;
-    /// Creates a new camera positioned to capture the scene.
-    fn new_camera(aspect_ratio: f64) -> Self::Camera;
-    /// Generates the scene that is returned to the renderer.
-    fn generate_scene() -> Result<Self::Scene, std::io::Error>;
-}
-
+/// Type defining the configuration and generation of a Scene.
 pub struct Scene {
     /// Image component of the scene.
     pub image: Image,
@@ -46,10 +26,11 @@ pub struct Scene {
     pub camera: Camera,
 }
 impl Scene {
-    pub fn generate_scene(config: &Config) -> Scene {
+    /// Generates the scene that is returned to the renderer.
+    pub fn generate_scene<F: FnOnce() -> HittableList>(config: &Config, world_creator: F) -> Scene {
         let image = Self::create_image(&config);
         let camera = Self::set_camera(image.aspect_ratio);
-        let world = Self::create_world(scene_random_spheres::RandomSpheres::new_world);
+        let world = Self::create_world(world_creator);
 
         Self {
             image,

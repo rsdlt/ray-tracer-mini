@@ -7,7 +7,7 @@ use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::materials::Scatterable;
 use crate::ray::Ray;
-use crate::textures::{solid_color::SolidColor, Texture, Textures};
+use crate::textures::{Texture, Textures};
 use crate::vector::Vec3;
 
 /// The Lambertian type with the albedo property.

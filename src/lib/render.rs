@@ -16,7 +16,8 @@ use crate::color::Color;
 use crate::hittable::{Hittable, HittableList};
 use crate::materials::Scatterable;
 use crate::ray::Ray;
-use crate::scenes::{scene_random_spheres, Config, SceneConfig};
+use crate::scenes::Scene;
+use crate::scenes::{scene_random_spheres, Config};
 use crate::utilities::{random_float, INFINITY};
 use crate::vector::{Point3, Vec3};
 
@@ -40,11 +41,11 @@ impl std::iter::Sum for ScanString {
         my_string
     }
 }
-use crate::scenes::Scene;
 /// Render function renders a Scene and writes the result to an Image file.
 pub fn render() -> Result<File, std::io::Error> {
     let config = Config::load_config()?;
-    let scene = Scene::generate_scene(&config);
+    let world_creator = scene_random_spheres::RandomSpheres::new_world;
+    let scene = Scene::generate_scene(&config, world_creator);
 
     // Render
     let path = Path::new("image.ppm");
@@ -61,7 +62,7 @@ pub fn render() -> Result<File, std::io::Error> {
         * scene.image.samples_per_pixel;
 
     println!(
-        "\nImage information:\n - W x H: {}x{} px\n - Recursion depth:{}\n - Samples per pixel: {}\n \
+        "\nImage information:\n - W x H: {} x {} px\n - Recursion depth:{}\n - Samples per pixel: {}\n \
           - Number of shapes: {}\n - Estimated calculations: {}\n\nRendering now:",
         scene.image.width,
         scene.image.height,

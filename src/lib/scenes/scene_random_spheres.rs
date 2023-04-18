@@ -1,23 +1,19 @@
 //! This module defines a random scene that include several Sphere of different sizes and Materials.
 
-#![warn(missing_docs)]
+#![allow(missing_docs)]
 
-use crate::camera::Camera;
 use crate::color::Color;
 use crate::hittable::HittableList;
-use crate::image::Image;
 use crate::materials::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal, Materials};
-use crate::scenes::{Config, SceneConfig};
 use crate::shapes::moving_sphere::MovingSphere;
 use crate::shapes::sphere::Sphere;
 use crate::shapes::HittableObjects;
 use crate::textures::checker::Checker;
 use crate::textures::solid_color::SolidColor;
 use crate::textures::Texture;
-use crate::utilities::{random_float, random_float_range, PI};
+use crate::utilities::{random_float, random_float_range};
 use crate::vector::{Point3, Vec3};
 
-/// Type that collects a scene full of random spheres with three different materials.
 pub struct RandomSpheres;
 
 impl RandomSpheres {
