@@ -6,4 +6,4 @@ samples = 100
 
 # "random spheres", "two spheres", "two perlin spheres"
 #scene = "two perlin spheres"
-scene = "two perlin spheres"
+scene = "random spheres"
