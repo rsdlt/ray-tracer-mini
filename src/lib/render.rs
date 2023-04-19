@@ -45,9 +45,7 @@ pub fn render() -> Result<File, std::io::Error> {
     // Load Config
     let config = Config::load_config()?;
 
-    // let world_creator = scene_two_spheres::TwoSpheres::create_world;
-    // let world_creator = scene_random_spheres::RandomSpheres::create_world;
-
+    // Generate scene
     let scene = Scene::generate_scene(&config);
 
     // Render

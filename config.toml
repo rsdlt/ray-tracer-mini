@@ -4,5 +4,5 @@ img_height = 225
 depth = 50
 samples = 100
 
-# "random spheres", "two spheres"
+# "random spheres", "two spheres", "two perlin spheres"
 scene = "two spheres"

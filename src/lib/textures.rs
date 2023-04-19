@@ -7,6 +7,7 @@ pub mod solid_color;
 
 use crate::color::Color;
 use crate::textures::checker::Checker;
+use crate::textures::noise::Noise;
 use crate::textures::solid_color::SolidColor;
 use crate::vector::Point3;
 
@@ -23,6 +24,8 @@ pub enum Texture {
     SolidColor(SolidColor),
     /// The checker texture variant.
     Checker(Checker),
+    /// The noise texture variant.
+    Noise(Noise),
 }
 
 impl Textures for Texture {
@@ -30,6 +33,7 @@ impl Textures for Texture {
         match self {
             Texture::SolidColor(solid_color) => solid_color.value(u, v, p),
             Texture::Checker(checker) => checker.value(u, v, p),
+            Texture::Noise(noise) => noise.value(u, v, p),
         }
     }
 }

@@ -15,6 +15,8 @@ use std::path::Path;
 
 /// Defines a random scene of Spheres of different sizes and material.
 pub mod scene_random_spheres;
+/// Defines a scene with two perlin spheres
+pub mod scene_two_perlin_spheres;
 /// Defines a scene with two spheres touching each other.  
 pub mod scene_two_spheres;
 
@@ -42,6 +44,7 @@ impl Scene {
         let scenes: Vec<CreateWorldFunctions> = vec![
             Box::new(scene_two_spheres::create_world),
             Box::new(scene_random_spheres::create_world),
+            Box::new(scene_two_perlin_spheres::create_world),
         ];
 
         let selector = config.scene.clone();
@@ -57,6 +60,10 @@ impl Scene {
             "random spheres" => {
                 world_creator = &scenes[1];
                 rendered_scene_name = "Random Spheres".to_string()
+            }
+            "two perlin spheres" => {
+                world_creator = &scenes[2];
+                rendered_scene_name = "Two Perlin Spheres".to_string()
             }
             _ => panic!("wrong scene name in config file"),
         }

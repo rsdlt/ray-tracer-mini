@@ -6,7 +6,7 @@
 use crate::color::Color;
 use crate::utilities::{random_float, random_float_range, EPSILON, NEAR_ZERO};
 use derive_more::{Add, Neg, Sub};
-use std::ops::{Div, Index, Mul};
+use std::ops::{Add, Div, Index, Mul};
 
 /// Type representing a geometric 3D vector with X, Y and Z coordinates.
 #[derive(Debug, Copy, Clone, Add, Sub, Neg)]
@@ -203,6 +203,18 @@ impl PartialEq for Vec3 {
         true
     }
 }
+
+// impl Add<Vec3> for f64 {
+//     type Output = Vec3;
+//
+//     fn add(self, rhs: Vec3) -> Self::Output {
+//         Vec3 {
+//             x: self + rhs.x,
+//             y: self + rhs.y,
+//             z: self + rhs.z,
+//         }
+//     }
+// }
 
 impl Mul<Vec3> for Vec3 {
     type Output = Self;
