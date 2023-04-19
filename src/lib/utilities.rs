@@ -30,8 +30,8 @@ pub fn random_float_range(min: f64, max: f64) -> f64 {
     min + (max - min) * random_float()
 }
 
-/// Function that returns usize random values in the [min, max) range.
+/// Function that returns usize random values in the [min, max] range.
 pub fn random_usize_range(min: usize, max: usize) -> usize {
     let mut rng = thread_rng();
-    rng.gen_range(min..max)
+    rng.gen_range(min..=(max + 1))
 }

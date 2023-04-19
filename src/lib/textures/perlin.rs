@@ -31,15 +31,11 @@ impl Perlin {
 
     /// New Perlin texture
     pub fn new() -> Self {
-        let ranfloat = Self::perlin_generate();
-        let perm_x = Self::perlin_generate_perm();
-        let perm_y = Self::perlin_generate_perm();
-        let perm_z = Self::perlin_generate_perm();
         Self {
-            ranvec: ranfloat,
-            perm_x,
-            perm_y,
-            perm_z,
+            ranvec: Self::perlin_generate(),
+            perm_x: Self::perlin_generate_perm(),
+            perm_y: Self::perlin_generate_perm(),
+            perm_z: Self::perlin_generate_perm(),
         }
     }
 
@@ -71,16 +67,18 @@ impl Perlin {
     }
 
     fn trilinear_interp(c: &[[[Vec3; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+        let uu = u * u * (3.0 - 2.0 * u);
+        let vv = v * v * (3.0 - 2.0 * v);
+        let ww = w * w * (3.0 - 2.0 * w);
         let mut accum = 0.0;
         for i in 0..2 {
             for j in 0..2 {
                 for k in 0..2 {
                     let weight = Vec3::new(u - i as f64, v - j as f64, w - k as f64);
-                    accum = accum
-                        + (i as f64 * u + (1.0 - i as f64) * (1.0 - u))
-                            * (j as f64 * v + (1.0 - j as f64) * (1.0 - v))
-                            * (k as f64 * w + (1.0 - k as f64) * (1.0 - w))
-                            * Vec3::dot(c[i][j][k], weight);
+                    accum += (i as f64 * uu + (1.0 - i as f64) * (1.0 - uu))
+                        * (j as f64 * vv + (1.0 - j as f64) * (1.0 - vv))
+                        * (k as f64 * ww + (1.0 - k as f64) * (1.0 - ww))
+                        * Vec3::dot(c[i][j][k], weight);
                 }
             }
         }
@@ -90,8 +88,8 @@ impl Perlin {
 
     fn perlin_generate() -> Vec<Vec3> {
         let mut rng = rand::thread_rng();
-        let mut p = Vec::with_capacity(256);
-        for _ in 0..256 {
+        let mut p = Vec::with_capacity(Self::POINT_COUNT);
+        for _ in 0..Self::POINT_COUNT {
             p.push(Vec3::new(
                 -1.0 + 2.0 * rng.gen::<f64>(),
                 -1.0 + 2.0 * rng.gen::<f64>(),
@@ -101,15 +99,21 @@ impl Perlin {
         p
     }
     fn perlin_generate_perm() -> Vec<usize> {
-        let mut p: Vec<usize> = (0..Self::POINT_COUNT).collect();
-        Self::permute(&mut p);
+        let mut p = Vec::with_capacity(Self::POINT_COUNT);
+        for i in 0..Self::POINT_COUNT {
+            p.push(i);
+        }
+        Self::permute(&mut p, Self::POINT_COUNT);
         p
     }
 
-    fn permute(p: &mut [usize]) {
-        for i in (1..p.len()).rev() {
-            let target = random_usize_range(0, i);
+    fn permute(p: &mut [usize], n: usize) -> Vec<usize> {
+        let mut rng = rand::thread_rng();
+        rng.gen_range(0.0..=1.0);
+        for i in (1..n).rev() {
+            let target = rng.gen_range(0..=(i + 1));
             p.swap(i, target);
         }
+        p.to_vec()
     }
 }

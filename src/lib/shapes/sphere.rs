@@ -13,6 +13,7 @@ use crate::textures::solid_color::SolidColor;
 use crate::textures::Texture;
 use crate::utilities::PI;
 use crate::vector::{Point3, Vec3};
+use std::f64::consts::FRAC_2_PI;
 
 /// A Sphere with center, radius and material.
 #[derive(Debug, Clone)]
@@ -42,12 +43,13 @@ impl Sphere {
     //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
     //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
     //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
-    fn get_sphere_uv(&self, p: Point3, u: &mut f64, v: &mut f64) {
-        let theta = (-p.y).acos();
-        let phi = (p.x).atan2(-p.z) + PI;
+    fn get_sphere_uv(&self, p: Point3) -> (f64, f64) {
+        let phi = (p.z).atan2(p.x) + PI;
+        let theta = (p.y).asin();
 
-        *u = phi / (2.0 * PI);
-        *v = theta / PI;
+        let u = 1.0 - (phi + PI) / (2.0 * PI);
+        let v = theta + FRAC_2_PI / PI;
+        (u, v)
     }
 }
 impl Default for Sphere {
@@ -92,8 +94,8 @@ impl Hittable for Sphere {
         hit_record.t = root;
         hit_record.p = ray.at(hit_record.t);
         let outward_normal = (hit_record.p - self.center) / self.radius;
-        self.get_sphere_uv(outward_normal, &mut hit_record.u, &mut hit_record.v);
         hit_record.set_face_normal(ray, outward_normal);
+        (hit_record.u, hit_record.v) = self.get_sphere_uv(outward_normal);
         hit_record.material = self.material.clone();
 
         Some(hit_record)

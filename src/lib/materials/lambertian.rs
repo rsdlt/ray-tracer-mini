@@ -31,14 +31,14 @@ impl Scatterable for Lambertian {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
-
+        // let mut scatter_direction = rec.p + rec.normal + Vec3::random_in_unit_sphere();
+        let target = rec.p + rec.normal + Vec3::random_in_unit_sphere();
         // Catch degenerate scatter direction
-        if scatter_direction.near_zero() {
-            scatter_direction = rec.normal;
-        }
+        // if scatter_direction.near_zero() {
+        //     scatter_direction = rec.normal;
+        // }
 
-        *scattered = Ray::new(rec.p, scatter_direction, r_in.time());
+        *scattered = Ray::new(rec.p, target - rec.p, r_in.time());
         *attenuation = self.albedo.value(rec.u, rec.v, rec.p);
         true
     }

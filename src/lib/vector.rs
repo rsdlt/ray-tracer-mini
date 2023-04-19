@@ -6,6 +6,7 @@
 use crate::color::Color;
 use crate::utilities::{random_float, random_float_range, EPSILON, NEAR_ZERO};
 use derive_more::{Add, Neg, Sub};
+use rand::Rng;
 use std::ops::{Add, Div, Index, Mul};
 
 /// Type representing a geometric 3D vector with X, Y and Z coordinates.
@@ -77,11 +78,11 @@ impl Vec3 {
 
     /// Function that pics a random Point in a unit radius sphere to accomplish Diffuse Materials.
     pub fn random_in_unit_sphere() -> Point3 {
+        let mut rng = rand::thread_rng();
+        let unit = Vec3::new(1.0, 1.0, 1.0);
         loop {
-            let p = Vec3::random_range(-1.0, 1.0);
-            if p.length_squared() >= 1.0 {
-                continue;
-            } else {
+            let p = 2.0 * Vec3::new(rng.gen::<f64>(), rng.gen::<f64>(), rng.gen::<f64>()) - unit;
+            if p.length_squared() < 1.0 {
                 return p;
             }
         }
